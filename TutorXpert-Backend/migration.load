@@ -1,5 +1,0 @@
-LOAD DATABASE
-    FROM sqlite:///data/users.db
-    INTO postgresql://tutorxpert_database_user:TIs4hJtmfLDK4l7tGOmtjb2imOyd55B6@dpg-d0rgpfndiees73c16vqg-a.singapore-postgres.render.com/tutorxpert_database?sslmode=disable
-
-WITH include drop, create tables, create indexes, reset sequences;

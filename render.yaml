@@ -1,6 +1,6 @@
 databases:
-  - name: tutorxpert-db             
-    databaseName: tutorxpert_database 
+  - name: tutorxpert-db                    # Render 平台上的数据库服务名称
+    databaseName: tutorxpert_database      # PostgreSQL 中的数据库名
     user: tutorxpert_user              
     plan: free                         
     region: singapore                    
@@ -15,7 +15,7 @@ services:
     plan: free
     envVars:
       - key: DATABASE_URL
-        value: your_actual_url
+        value: postgresql://tutorxpert_user:GGgrcFZaP6cRt6m0Ow3eVvDYvJ3GFxz6@dpg-d0s43a6mcj7s73f0p6g0-a.singapore-postgres.render.com/tutorxpert_database_lbk5
 
   - type: web
     name: tutorxpert-frontend

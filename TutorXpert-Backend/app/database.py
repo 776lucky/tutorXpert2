@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # 默认连接字符串（本地 SQLite）
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./users.db")
+DATABASE_URL = os.getenv("DATABASE_URL", "")
 
 # SQLite 特有参数配置
 if DATABASE_URL.startswith("sqlite"):
