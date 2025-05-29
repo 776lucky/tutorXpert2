@@ -16,5 +16,4 @@ services:
     rootDir: TutorXpert-Frontend
     buildCommand: "npm install && npm run build"
     staticPublishPath: dist
-    plan: free
 
