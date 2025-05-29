@@ -299,31 +299,34 @@ const TasksPage = () => {
       </div>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-md bg-background border border-blue-500 text-foreground">
-          {selectedTutor ? (
+          {selectedTask ? (
             <>
               <DialogHeader>
                 <DialogTitle className="text-primary text-2xl">
-                  {selectedTutor.first_name} {selectedTutor.last_name}
+                  {selectedTask.title}
                 </DialogTitle>
               </DialogHeader>
               <div className="py-2 space-y-2">
-                <p><strong>Subjects:</strong> {selectedTutor.subjects}</p>
+                <p><strong>Subject:</strong> {selectedTask.subject}</p>
                 <p><strong>Description:</strong> {selectedTask.description}</p>
-                <p><strong>Experience:</strong> {selectedTutor.experience_details}</p>
-                <p><strong>Availability:</strong> {selectedTutor.availability}</p>
-                <p><strong>Address:</strong> {selectedTutor.address}</p>
+                <p><strong>Budget:</strong> {selectedTask.budget}</p>
+                <p><strong>Deadline:</strong> {selectedTask.deadline}</p>
+                <p><strong>Address:</strong> {selectedTask.address}</p>
               </div>
               <DialogFooter className="pt-4">
-                <Button onClick={() => alert("预约成功（模拟）")}>
-                  Book a Session
+                <Button onClick={() => alert("Apply submitted (mock)")}>
+                  Apply Now
                 </Button>
               </DialogFooter>
             </>
           ) : (
-            <p>Loading tutor profile...</p>
+            <p>Loading task details...</p>
           )}
         </DialogContent>
       </Dialog>
+
+
+
     </div>
   );
 };
