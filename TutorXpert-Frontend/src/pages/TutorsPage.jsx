@@ -119,6 +119,7 @@ const TutorsPage = () => {
       });
     }
     setFilteredTutors(tempFiltered);
+    console.log("🎯 Final filteredTutors count:", tempFiltered.length, tempFiltered);
   };
 
   const handleSearch = e => setSearchTerm(e.target.value);
@@ -301,8 +302,12 @@ const TutorsPage = () => {
             })}
           </motion.div>
 
-          <div className="relative flex-1 rounded-xl overflow-hidden shadow-2xl">
-            <MapView tutors={filteredTutors} onTutorClick={handleMapClick} onBoundsChange={fetchTutorsByBounds} />
+          <div className="relative flex-1 rounded-xl overflow-hidden shadow-2xl">            
+            <MapView
+              tutors={filteredTutors.filter(t => typeof t.lat === "number" && typeof t.lng === "number")}
+              onTutorClick={handleMapClick}
+              onBoundsChange={fetchTutorsByBounds}
+            />
           </div>
         </div>
       </div>

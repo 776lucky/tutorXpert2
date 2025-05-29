@@ -10,7 +10,7 @@ const TaskDetailsPage = () => {
   const { id } = useParams();
   const { toast } = useToast();
   const [task, setTask] = useState(null);
-
+  console.log("📦 TaskDetailsPage loaded. ID:", id);
   useEffect(() => {
     const fetchTask = async () => {
       try {

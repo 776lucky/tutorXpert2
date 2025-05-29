@@ -280,10 +280,11 @@ const TasksPage = () => {
                     <Button
                       variant="outline"
                       className="flex-1"
-                      onClick={() => handleViewTaskDetails(task.id)}
+                      asChild  // ✅ 与 TutorsPage 相同写法
                     >
-                      View Details
+                      <Link to={`/projects/${task.id}`}>View Details</Link>
                     </Button>
+
                     <Button
                       className="flex-1"
                       onClick={() =>
@@ -296,6 +297,9 @@ const TasksPage = () => {
                       Apply Now <Zap className="ml-2 h-4 w-4 text-blue-400" />
                     </Button>
                   </CardFooter>
+
+
+
                 </Card>
               </motion.div>
             ))}
