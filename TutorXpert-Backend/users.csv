@@ -1,0 +1,6 @@
+id,email,hashed_password,role,created_at
+1,11111111@qq.com,$2b$12$R73jYw4Ify5q9Vya/5da8uZPtq6kZnwUlHDhSAML/6fqKHpc0xbvW,student,"2025-05-27 12:24:06"
+1002,zara@example.com,mockhashed,tutor,"2025-05-27 12:25:25"
+1003,john@example.com,mockhashed,tutor,"2025-05-27 12:25:58"
+1004,chloe@example.com,mockhashed,tutor,"2025-05-27 12:25:59"
+1005,grace@example.com,mockhashed,tutor,"2025-05-27 12:26:00"
