@@ -2,10 +2,20 @@ services:
   - type: web
     name: tutorxpert-backend
     env: python
-    region: singapore  # 🌏 选最近区域
+    region: singapore
     buildCommand: "pip install -r requirements.txt"
     startCommand: "uvicorn app.main:app --host 0.0.0.0 --port 10000"
     plan: free
     envVars:
       - key: DATABASE_URL
-        value: postgresql://tutorxpert_database_user:TIs4hJtmfLDK4l7tGOmtjb2imOyd55B6@dpg-d0rgpfndiees73c16vqg-a.singapore-postgres.render.com:5432/tutorxpert_database
+        value: your_actual_url
+
+  - type: web
+    name: tutorxpert-frontend
+    env: node
+    region: singapore
+    rootDir: TutorXpert-Frontend
+    buildCommand: "npm install && npm run build"
+    startCommand: "npm run preview"
+    staticPublishPath: dist
+    plan: free
