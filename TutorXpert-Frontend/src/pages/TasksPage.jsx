@@ -34,7 +34,8 @@ const getDistanceFromLatLng = (lat1, lng1, lat2, lng2) => {
 
 const TasksPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedTutor, setSelectedTutor] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);  // ✅ 用于存储点击的任务详情
+
   
   const fetchTasksByBounds = async (bounds) => {
     try {
@@ -307,6 +308,7 @@ const TasksPage = () => {
               </DialogHeader>
               <div className="py-2 space-y-2">
                 <p><strong>Subjects:</strong> {selectedTutor.subjects}</p>
+                <p><strong>Description:</strong> {selectedTask.description}</p>
                 <p><strong>Experience:</strong> {selectedTutor.experience_details}</p>
                 <p><strong>Availability:</strong> {selectedTutor.availability}</p>
                 <p><strong>Address:</strong> {selectedTutor.address}</p>
