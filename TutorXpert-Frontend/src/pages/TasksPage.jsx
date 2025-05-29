@@ -14,6 +14,9 @@ import TaskMapView from "@/components/TaskMapView";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { useParams } from "react-router-dom";
+
+
 
 
 const getDistanceFromLatLng = (lat1, lng1, lat2, lng2) => {
@@ -59,6 +62,15 @@ const TasksPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const taskRefs = useRef({});
 
+
+  const { id } = useParams();
+  useEffect(() => {
+    if (id) {
+      handleViewTaskDetails(id);  // 自动打开弹窗
+    }
+  }, [id]);
+
+  
   useEffect(() => {
     setTimeout(() => {
       // setTasks(mockTasks);
