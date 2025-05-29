@@ -118,9 +118,9 @@ const TasksPage = () => {
     setFilteredTasks(tempFiltered);
   };
 
-  const handleViewTutorDetails = async (tutorId) => {
+  const handleViewTutorDetails = async (user_id) => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/tutors/${tutorId}`);
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/tutors/${user_id}`);
       setSelectedTutor(res.data);
       setIsDialogOpen(true);
     } catch (err) {
