@@ -9,7 +9,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Search, Calendar, DollarSign, BookOpen, Zap, PlusCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
-import mockTasks from "@/data/mockTasks";
+// import mockTasks from "@/data/mockTasks";
 import TaskMapView from "@/components/TaskMapView";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
@@ -61,8 +61,8 @@ const TasksPage = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      setTasks(mockTasks);
-      setFilteredTasks(mockTasks);
+      // setTasks(mockTasks);
+      // setFilteredTasks(mockTasks);
       setIsLoading(false);
     }, 1000);
   }, []);
@@ -267,7 +267,7 @@ const TasksPage = () => {
                     <Button
                       variant="outline"
                       className="flex-1"
-                      onClick={() => handleViewTaskDetails(task.id)}
+                      onClick={() => handleViewTaskDetails(task)}
                     >
                       View Details
                     </Button>
