@@ -1,3 +1,10 @@
+databases:
+  - name: tutorxpert-db             
+    databaseName: tutorxpert_database 
+    user: tutorxpert_user              
+    plan: free                         
+    region: singapore                    
+
 services:
   - type: web
     name: tutorxpert-backend
