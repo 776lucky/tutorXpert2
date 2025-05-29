@@ -267,7 +267,7 @@ const TasksPage = () => {
                     <Button
                       variant="outline"
                       className="flex-1"
-                      onClick={() => handleViewTaskDetails(task)}
+                      onClick={() => handleViewTaskDetails(task.id)}
                     >
                       View Details
                     </Button>
