@@ -2,11 +2,15 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'http://localhost:10000',  // 你 FastAPI 后端的地址
+  baseURL:
+    import.meta.env.MODE === 'development'
+      ? 'http://localhost:10000'
+      : 'https://tutorxpert-backend-9qxd.onrender.com',
   timeout: 5000,
   headers: {
     'Content-Type': 'application/json'
   }
 })
+
 
 export default api
