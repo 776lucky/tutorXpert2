@@ -38,7 +38,8 @@ const getDistanceFromLatLng = (lat1, lng1, lat2, lng2) => {
 const TasksPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);  // ✅ 用于存储点击的任务详情
-
+  const { id } = useParams();
+  const { toast } = useToast();
   
   const fetchTasksByBounds = async (bounds) => {
     try {
@@ -51,7 +52,7 @@ const TasksPage = () => {
       console.error("❌ Map filter task fetch error", err);
     }
   };
-  const { toast } = useToast();
+
   const [tasks, setTasks] = useState([]);
   const [filteredTasks, setFilteredTasks] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,8 +63,21 @@ const TasksPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const taskRefs = useRef({});
 
+  const handleViewTaskDetails = async (taskId) => {
+    try {
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/tasks/${taskId}`);
+      setSelectedTask(res.data);
+      setIsDialogOpen(true);
+    } catch (err) {
+      console.error("Failed to fetch task info", err);
+      toast({
+        title: "Error",
+        description: "Failed to load task details.",
+        variant: "destructive",
+      });
+    }
+  };
 
-  const { id } = useParams();
   useEffect(() => {
     if (id) {
       handleViewTaskDetails(id);  // 自动打开弹窗
@@ -131,20 +145,7 @@ const TasksPage = () => {
     setFilteredTasks(tempFiltered);
   };
 
-  const handleViewTaskDetails = async (taskId) => {
-    try {
-      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/tasks/${taskId}`);
-      setSelectedTask(res.data);
-      setIsDialogOpen(true);
-    } catch (err) {
-      console.error("Failed to fetch task info", err);
-      toast({
-        title: "Error",
-        description: "Failed to load task details.",
-        variant: "destructive",
-      });
-    }
-  };
+
   
 
   const handleSearch = e => setSearchTerm(e.target.value);
