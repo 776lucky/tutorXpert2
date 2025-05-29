@@ -13,7 +13,6 @@ services:
   - type: web
     name: tutorxpert-frontend
     env: static        
-    region: singapore
     rootDir: TutorXpert-Frontend
     buildCommand: "npm install && npm run build"
     staticPublishPath: dist
