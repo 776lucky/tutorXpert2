@@ -265,7 +265,7 @@ const TasksPage = () => {
                     <Button
                       variant="outline"
                       className="flex-1"
-                      onClick={() => handleViewTutorDetails(task.postedBy)}  // 假设 postedBy 是 tutorId
+                      onClick={() => handleViewTutorDetails(task.user_id)}  // 假设 postedBy 是 tutorId
                     >
                       View Details
                     </Button>
