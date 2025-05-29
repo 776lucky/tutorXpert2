@@ -1,11 +1,13 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from app import models, schemas
 from app.database import get_db
 
-router = APIRouter()
+router = APIRouter(tags=["tasks"])
 print("✅ task.py loaded")
+
+# ✅ 地图边界筛选任务列表
 @router.get("/tasks/search", response_model=List[schemas.TaskOut])
 def search_tasks_by_bounds(
     north: float = Query(...),
@@ -26,3 +28,11 @@ def search_tasks_by_bounds(
         query = query.filter(models.Task.subject.ilike(f"%{subject}%"))
 
     return query.all()
+
+# ✅ 根据 task_id 返回任务详情
+@router.get("/tasks/{task_id}", response_model=schemas.TaskOut)
+def get_task_by_id(task_id: int, db: Session = Depends(get_db)):
+    task = db.query(models.Task).filter(models.Task.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+    return task

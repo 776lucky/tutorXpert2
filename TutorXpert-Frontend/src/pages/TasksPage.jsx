@@ -119,20 +119,21 @@ const TasksPage = () => {
     setFilteredTasks(tempFiltered);
   };
 
-  const handleViewTutorDetails = async (user_id) => {
+  const handleViewTaskDetails = async (taskId) => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/tutors/${user_id}`);
-      setSelectedTutor(res.data);
+      const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/tasks/${taskId}`);
+      setSelectedTask(res.data);
       setIsDialogOpen(true);
     } catch (err) {
-      console.error("Failed to fetch tutor info", err);
+      console.error("Failed to fetch task info", err);
       toast({
         title: "Error",
-        description: "Failed to load tutor profile.",
+        description: "Failed to load task details.",
         variant: "destructive",
       });
     }
   };
+  
 
   const handleSearch = e => setSearchTerm(e.target.value);
   const handleSubjectFilter = setSubjectFilter;
@@ -266,7 +267,7 @@ const TasksPage = () => {
                     <Button
                       variant="outline"
                       className="flex-1"
-                      onClick={() => handleViewTutorDetails(task.user_id)} 
+                      onClick={() => handleViewTaskDetails(task.id)}
                     >
                       View Details
                     </Button>
