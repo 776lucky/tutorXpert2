@@ -43,7 +43,7 @@ def update_profile(user_id: int, updated: schemas.ProfileUpdate, db: Session = D
         lat, lng = get_lat_lng_from_address(updated.address)
         if lat and lng:
             profile.lat = lat
-            profile.lat = lng
+            profile.lng = lng
 
     db.commit()
     db.refresh(profile)
