@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -8,10 +7,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Send, Inbox, UserCircle, Search, Paperclip, Smile } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import axios from "axios";
+import { useSearchParams } from "react-router-dom";
 
 
 const MyMessagesPage = () => {
+  const [searchParams] = useSearchParams();
+  const tutorIdFromQuery = searchParams.get("tutor_id");
   const currentUserId = Number(localStorage.getItem("user_id"));
+  if (!currentUserId || currentUserId === 0) {
+    console.error("❌ 当前用户未登录，user_id 无效！");
+    return null; // 或显示登录提示
+  }
 
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
@@ -28,6 +34,26 @@ const MyMessagesPage = () => {
 
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+
+  useEffect(() => {
+    if (!tutorIdFromQuery) return;
+    const tutorId = Number(tutorIdFromQuery);
+    const existing = conversations.find(c => c.id === tutorId);
+    if (existing) {
+      setSelectedConversation(existing);
+    } else {
+      setSelectedConversation(prev => {
+        if (prev?.id === tutorId) return prev; // 避免重复触发
+        return {
+          id: tutorId,
+          name: `Tutor ${tutorId}`,
+          lastMessage: "",
+          unread: 0,
+          timestamp: "Now",
+        };
+      });
+    }
+  }, [tutorIdFromQuery]);
 
   useEffect(() => {
     if (!selectedConversation) return;

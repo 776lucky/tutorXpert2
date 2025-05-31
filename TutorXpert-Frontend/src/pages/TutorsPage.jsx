@@ -12,6 +12,9 @@ import { useToast } from "@/components/ui/use-toast";
 import mockTutors from "@/data/mockTutors";
 import MapView from "@/components/MapView";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+
 
 
 const parseSubjects = (subjects) => {
@@ -46,6 +49,8 @@ const TutorsPage = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const cardRefs = useRef({});
+
+  const navigate = useNavigate();
 
   // ✅ 第一次加载触发地图范围请求
   useEffect(() => {
@@ -126,13 +131,17 @@ const TutorsPage = () => {
   const handleSubjectFilter = value => setSubjectFilter(value);
   const handleRatingFilter = value => setRatingFilter(value);
 
-  const handleContactTutor = (tutorName) => {
+  const handleContactTutor = (tutor) => {
+    // ✅ 可选 toast 提示
     toast({
       title: "Connection Initiated",
-      description: `Secure channel request sent to ${tutorName}. Awaiting confirmation.`,
-      duration: 5000,
+      description: `Secure channel request sent to ${tutor.name}.`,
+      duration: 3000,
       className: "bg-card border-primary/50 text-foreground",
     });
+  
+    // ✅ 跳转并携带 tutor_id 参数
+    navigate(`/dashboard/messages?tutor_id=${tutor.id}`);
   };
 
   const handleMapClick = (id) => {
@@ -292,7 +301,7 @@ const TutorsPage = () => {
                       <Button variant="outline" className="flex-1" asChild>
                         <Link to={`/tutors/${tutor.id}`}>View Full Profile</Link>
                       </Button>
-                      <Button className="flex-1" onClick={() => handleContactTutor(tutor.name)}>
+                      <Button className="flex-1" onClick={() => handleContactTutor(tutor)}>
                         Connect <Zap className="ml-2 h-4 w-4" />
                       </Button>
                     </CardFooter>
