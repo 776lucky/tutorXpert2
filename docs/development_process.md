@@ -64,33 +64,41 @@ Key concepts:
 
 ---
 
-## Functional Flow Currently Supported
+## 🧭 Functional Flow Currently Supported
 
-Student: Register → Edit Profile → Post Task → View Tutors  
-Tutor: Register → Edit Profile → View Tasks → View Details  
+**Student Flow:**  
+✅ Register → Edit Profile → Post Task → View Tutors  
 
-The platform now supports the full content flow from posting to discovery, for both students and tutors.
+**Tutor Flow:**  
+✅ Register → Edit Profile → View Tasks → View Details  
+
+The platform currently supports the **complete flow from task posting to discovery**, for both students and tutors.
 
 ---
 
-## Key Features Still Needed for Matching
+## 📌 Key Features Still Needed for Matching
 
-To enable full interaction between students and tutors, the following features are planned:
+To enable full two-way interaction between students and tutors, the following features are planned:
 
-1. Task Application System  
-Tutors cannot yet apply to tasks. Planned: tutors submit applications, students review and accept applicants.
+### 📨 Task Application System  
+Tutors cannot yet apply to tasks.  
+Planned: Tutors submit applications → Students review & accept.
 
-2. Communication Channel  
-No contact method currently exists between users. Planned: show contact info after match or build a basic messaging feature.
+### 💬 Communication Channel  
+No way for users to contact each other yet.  
+Planned: Show contact info after matching or implement a basic messaging system.
 
-3. Task Status Updates  
-Tasks cannot change state. Planned flow: Open → In Progress → Completed.
+### 🔄 Task Status Updates  
+Tasks remain in `Open` state.  
+Planned: Enable transitions such as `Open → In Progress → Completed`.
 
-4. Time Scheduling  
-Tutors do not specify available times. Planned: tutors select availability blocks; students book accordingly.
+### 📅 Time Scheduling  
+Tutors cannot define availability.  
+Planned: Tutors select time blocks → Students choose/book accordingly.
 
-5. Reviews and Ratings  
-No feedback system implemented. Planned: allow students to rate and review tutors after completion.
+### ⭐ Reviews and Ratings  
+No feedback mechanism in place.  
+Planned: Allow students to rate and review tutors after task completion.
 
 ---
 
@@ -98,22 +106,22 @@ No feedback system implemented. Planned: allow students to rate and review tutor
 
 | Component                        | Status    | Description                                                  |
 |----------------------------------|-----------|--------------------------------------------------------------|
-| User registration & roles        | Done      | Role-based login flow for students and tutors                |
-| Profile editing                  | Done      | Editable profile with name, contact, education, and subjects |
-| Task creation                    | Done      | Task form with subject, budget, deadline, and geolocation    |
-| Task map filtering               | Done      | Tutors filter tasks using map bounds + subject keywords      |
-| Task detail pages                | Done      | Full-page task view with all information displayed           |
-| Tutor discovery                  | Done      | Students browse tutors by map and subject filter             |
-| Data schema validation           | Done      | Pydantic + SQLAlchemy ensure type-safe, validated data       |
-| Database integration             | Done      | PostgreSQL with normalized models and foreign keys           |
-| Map integration (Tasks & Tutors) | Done      | Interactive map views with dynamic pin updates               |
-| Geolocation-based queries        | Done      | Backend handles lat/lng bounding box queries for filtering   |
-| Datetime & timezone handling     | Done      | Task timestamps auto-managed; compatible with API responses  |
-| Sample data population           | Done      | Pre-filled realistic task and tutor entries for testing/demo |
-| Frontend routing & navigation    | Done      | Page transitions for tasks, tutors, and profile views        |
-| API testing & debugging          | Done      | Manual validation of all endpoints with real data            |
-| UI component design              | Done      | Reusable cards, input fields, and layout elements            |
-| Form validation & feedback       | Done      | Frontend-level checks with user-friendly error messages      |
+| User registration & roles        | ✅      | Role-based login flow for students and tutors                |
+| Profile editing                  | ✅      | Editable profile with name, contact, education, and subjects |
+| Task creation                    | ✅      | Task form with subject, budget, deadline, and geolocation    |
+| Task map filtering               | ✅      | Tutors filter tasks using map bounds + subject keywords      |
+| Task detail pages                | ✅      | Full-page task view with all information displayed           |
+| Tutor discovery                  | ✅      | Students browse tutors by map and subject filter             |
+| Data schema validation           | ✅      | Pydantic + SQLAlchemy ensure type-safe, validated data       |
+| Database integration             | ✅      | PostgreSQL with normalized models and foreign keys           |
+| Map integration (Tasks & Tutors) | ✅      | Interactive map views with dynamic pin updates               |
+| Geolocation-based queries        | ✅      | Backend handles lat/lng bounding box queries for filtering   |
+| Datetime & timezone handling     | ✅      | Task timestamps auto-managed; compatible with API responses  |
+| Sample data population           | ✅      | Pre-filled realistic task and tutor entries for testing/demo |
+| Frontend routing & navigation    | ✅      | Page transitions for tasks, tutors, and profile views        |
+| API testing & debugging          | ✅      | Manual validation of all endpoints with real data            |
+| UI component design              | ✅      | Reusable cards, input fields, and layout elements            |
+| Form validation & feedback       | ✅      | Frontend-level checks with user-friendly error messages      |
 
 All modules were designed, developed, and tested independently by the same developer, across both frontend and backend layers. Work covers full-stack integration, business logic, and production-level data modeling.
 
