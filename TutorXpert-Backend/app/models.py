@@ -2,6 +2,8 @@ from sqlalchemy import Column, Integer, String, Boolean, Text, DateTime, Foreign
 from sqlalchemy.orm import relationship
 from app.database import Base
 from sqlalchemy import Float
+from sqlalchemy.sql import func
+
 
 class User(Base):
     __tablename__ = "users"
@@ -59,5 +61,15 @@ class Task(Base):
     user_id = Column(Integer, ForeignKey("users.id"))  # ✅ 添加这一行
     user = relationship("User", back_populates="tasks")  # ✅ 添加这一行
 
+class Message(Base):
+    __tablename__ = "messages"
+    id = Column(Integer, primary_key=True, index=True)
+    sender_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    receiver_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    text = Column(Text, nullable=False)
+    timestamp = Column(DateTime(timezone=True), server_default=func.now())
+
+    sender = relationship("User", foreign_keys=[sender_id])
+    receiver = relationship("User", foreign_keys=[receiver_id])
 
 

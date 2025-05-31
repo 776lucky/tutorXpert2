@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,8 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Send, Inbox, UserCircle, Search, Paperclip, Smile } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import axios from "axios";
+
 
 const MyMessagesPage = () => {
+  const currentUserId = Number(localStorage.getItem("user_id"));
+
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
@@ -21,28 +25,47 @@ const MyMessagesPage = () => {
     { id: 3, name: "Prof. Kenji Tanaka", lastMessage: "Let's discuss the blockchain architecture.", unread: 0, avatar: "Male coder with multiple monitors", timestamp: "Mon" },
   ];
   const [selectedConversation, setSelectedConversation] = useState(conversations[0]);
-  const [messages, setMessages] = useState([
-    { sender: "Dr. Anya Sharma", text: "Hello! Regarding your quantum entanglement project, I have some availability this week.", time: "10:25 AM" },
-    { sender: "You", text: "Great! When would be a good time to connect?", time: "10:28 AM" },
-    { sender: "Dr. Anya Sharma", text: "Yes, I'm available on Thursday at 3 PM.", time: "10:30 AM" },
-     { sender: "Dr. Anya Sharma", text: "Does that work for you?", time: "10:30 AM" },
-  ]);
+
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
 
-  const handleSendMessage = () => {
+  useEffect(() => {
+    if (!selectedConversation) return;
+  
+    const fetchMessages = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/messages/history/${currentUserId}/${selectedConversation.id}`);
+        setMessages(res.data);
+      } catch (err) {
+        console.error("Failed to load messages", err);
+      }
+    };
+  
+    fetchMessages();
+  }, [selectedConversation]);
+
+  const handleSendMessage = async () => {
     if (newMessage.trim() === "") return;
-    setMessages([...messages, { sender: "You", text: newMessage, time: "Now" }]);
-    setNewMessage("");
-    // Update last message in conversations (mock)
-    const convIndex = conversations.findIndex(c => c.id === selectedConversation.id);
-    if (convIndex !== -1) conversations[convIndex].lastMessage = newMessage;
+
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/messages`, {
+        sender_id: currentUserId,
+        receiver_id: selectedConversation.id,
+        text: newMessage,
+      });
+      setMessages((prev) => [...prev, res.data]);
+      setNewMessage("");
+    } catch (err) {
+      console.error("Failed to send message", err);
+    }
   };
   
   const getInitials = (name) => {
     if (!name) return "??";
-    const names = name.split(' ');
-    if (names.length === 1) return names[0].substring(0, 2).toUpperCase();
-    return names[0][0].toUpperCase() + names[names.length - 1][0].toUpperCase();
+    const names = name.split(" ");
+    return names.length === 1
+      ? names[0].substring(0, 2).toUpperCase()
+      : names[0][0].toUpperCase() + names[names.length - 1][0].toUpperCase();
   };
 
 

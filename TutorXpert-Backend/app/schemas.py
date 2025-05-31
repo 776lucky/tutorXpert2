@@ -126,3 +126,19 @@ class TaskCreate(BaseModel):
     posted_date: Optional[datetime] = None
     status: Optional[str] = "Open"
     user_id: int  # ✅ 添加这一行
+
+
+class MessageCreate(BaseModel):
+    sender_id: int
+    receiver_id: int
+    text: str
+
+class MessageOut(BaseModel):
+    id: int
+    sender_id: int
+    receiver_id: int
+    text: str
+    timestamp: datetime
+
+    class Config:
+        orm_mode = True
