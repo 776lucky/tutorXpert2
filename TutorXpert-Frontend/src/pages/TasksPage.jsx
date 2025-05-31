@@ -101,7 +101,7 @@ const TasksPage = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          const coords = [pos.coords.lat, pos.coords.lat];
+          const coords = [pos.coords.lat, pos.coords.lng];
           setUserPosition(coords);
         },
         (err) => {

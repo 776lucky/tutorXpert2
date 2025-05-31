@@ -78,7 +78,7 @@ class TaskOut(BaseModel):
     budget: Optional[str] = None
     deadline: Optional[str] = None
     posted_by: Optional[str] = None
-    posted_date: Optional[str] = None
+    posted_date: Optional[datetime] = None
     status: Optional[str] = None
 
     class Config:
@@ -111,3 +111,18 @@ class TutorOut(BaseModel):
         base = super().model_validate(obj)
         base.name = f"{base.first_name} {base.last_name}"  # ✅ 安全拼接
         return base
+
+
+class TaskCreate(BaseModel):
+    title: str
+    subject: Optional[str] = None
+    address: Optional[str] = None
+    lat: float
+    lng: float
+    description: Optional[str] = None
+    budget: Optional[str] = None
+    deadline: Optional[str] = None
+    posted_by: Optional[str] = None
+    posted_date: Optional[datetime] = None
+    status: Optional[str] = "Open"
+    user_id: int  # ✅ 添加这一行

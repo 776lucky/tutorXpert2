@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from app import models, schemas
 from app.database import get_db
+from fastapi import status
+
 
 router = APIRouter(tags=["tasks"])
 print("✅ task.py loaded")
@@ -36,3 +38,11 @@ def get_task_by_id(task_id: int, db: Session = Depends(get_db)):
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
     return task
+
+@router.post("/tasks", response_model=schemas.TaskOut, status_code=status.HTTP_201_CREATED)
+def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
+    new_task = models.Task(**task.dict())
+    db.add(new_task)
+    db.commit()
+    db.refresh(new_task)
+    return new_task

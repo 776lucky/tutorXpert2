@@ -59,7 +59,7 @@ const MapEvents = ({ onBoundsChange }) => {
 };
 
 const MapView = ({ tutors = [], onTutorClick, onBoundsChange }) => {
-  const defaultCenter = [-25.2744, 133.7751]; // Australia center
+  const defaultCenter = [-33.87, 151.21]; // Sydney center
   const [userPosition, setUserPosition] = useState(null);
   const { toast } = useToast();
 
@@ -114,7 +114,7 @@ const MapView = ({ tutors = [], onTutorClick, onBoundsChange }) => {
   return (
     <MapContainer
       center={defaultCenter}
-      zoom={4.2}
+      zoom={12}
       scrollWheelZoom={true}
       className="w-full h-full min-h-[600px] z-0 rounded-xl"
     >

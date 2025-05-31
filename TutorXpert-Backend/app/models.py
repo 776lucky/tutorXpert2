@@ -55,7 +55,9 @@ class Task(Base):
     deadline = Column(String)
     status = Column(String)
     posted_by = Column(String)
+    posted_date = Column(DateTime(timezone=True), server_default=func.now())  # ✅ 添加
     user_id = Column(Integer, ForeignKey("users.id"))  # ✅ 添加这一行
     user = relationship("User", back_populates="tasks")  # ✅ 添加这一行
+
 
 

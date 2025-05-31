@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const NewTaskPage = () => {
   const { toast } = useToast();
@@ -38,10 +39,10 @@ const NewTaskPage = () => {
     setFormData(prev => ({ ...prev, attachments: files }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
+  
     if (!formData.title || !formData.subject || !formData.description || !formData.budget || !formData.deadline) {
       toast({
         title: "Error",
@@ -51,30 +52,35 @@ const NewTaskPage = () => {
       setIsSubmitting(false);
       return;
     }
-
-    setTimeout(() => {
-      const projects = JSON.parse(localStorage.getItem("projects") || "[]");
-      const newTask = {
-        id: Date.now(),
+  
+    try {
+      const res = await axios.post("https://tutorxpert-backend.onrender.com/tasks", {
         ...formData,
-        postedBy: "You",
-        postedDate: "Just now",
+        lat: -33.87,            // ✅ 临时写死，后续用定位或用户选择
+        lng: 151.21,
+        posted_by: "You",
+        posted_date: new Date().toISOString().slice(0, 10),
         status: "Open",
-        attachments: formData.attachments.map(file => file.name)
-      };
-
-      projects.push(newTask);
-      localStorage.setItem("projects", JSON.stringify(projects));
-
+        user_id: 1              // ✅ 临时写死，后续替换为当前登录用户 ID
+      });
+  
       toast({
         title: "Success!",
-        description: "Your project has been posted successfully.",
+        description: "Your task has been posted to the platform.",
       });
-
-      setIsSubmitting(false);
       navigate("/projects");
-    }, 1500);
+    } catch (err) {
+      console.error("❌ 发布失败:", err.response?.data || err.message);
+      toast({
+        title: "Submission Failed",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+  
 
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
