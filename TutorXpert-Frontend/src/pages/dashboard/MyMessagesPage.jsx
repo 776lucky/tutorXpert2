@@ -24,36 +24,52 @@ const MyMessagesPage = () => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
   };
 
-  // Mock data
-  const conversations = [
-    { id: 1, name: "Dr. Anya Sharma", lastMessage: "Yes, I'm available on Thursday at 3 PM.", unread: 2, avatar: "Female scientist with futuristic interface", timestamp: "10:30 AM" },
-    { id: 2, name: "Student Mark L.", lastMessage: "Thanks for the feedback on my project draft!", unread: 0, avatar: "Young male student working on laptop", timestamp: "Yesterday" },
-    { id: 3, name: "Prof. Kenji Tanaka", lastMessage: "Let's discuss the blockchain architecture.", unread: 0, avatar: "Male coder with multiple monitors", timestamp: "Mon" },
-  ];
-  const [selectedConversation, setSelectedConversation] = useState(conversations[0]);
+  const [conversations, setConversations] = useState([]);
+
+  useEffect(() => {
+    const fetchConversations = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/messages/conversations/${currentUserId}`);
+        setConversations(res.data);
+      } catch (err) {
+        console.error("Failed to load conversations", err);
+      }
+    };
+  
+    fetchConversations();
+  }, [currentUserId]);
+  
+
+
+  
+  const [selectedConversation, setSelectedConversation] = useState(null);
+
+  useEffect(() => {
+    if (conversations.length > 0 && !selectedConversation) {
+      setSelectedConversation(conversations[0]);
+    }
+  }, [conversations]);
 
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
 
   useEffect(() => {
-    if (!tutorIdFromQuery) return;
+    if (!tutorIdFromQuery || conversations.length === 0) return;
     const tutorId = Number(tutorIdFromQuery);
     const existing = conversations.find(c => c.id === tutorId);
     if (existing) {
       setSelectedConversation(existing);
     } else {
-      setSelectedConversation(prev => {
-        if (prev?.id === tutorId) return prev; // 避免重复触发
-        return {
-          id: tutorId,
-          name: `Tutor ${tutorId}`,
-          lastMessage: "",
-          unread: 0,
-          timestamp: "Now",
-        };
+      setSelectedConversation({
+        id: tutorId,
+        name: `Tutor ${tutorId}`,
+        last_message: "",
+        unread: 0,
+        timestamp: "Now",
       });
     }
-  }, [tutorIdFromQuery]);
+  }, [tutorIdFromQuery, conversations]);
+  
 
   useEffect(() => {
     if (!selectedConversation) return;
@@ -136,7 +152,7 @@ const MyMessagesPage = () => {
                     <span className="text-xs text-muted-foreground">{conv.timestamp}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <p className="text-xs text-muted-foreground truncate w-4/5">{conv.lastMessage}</p>
+                    <p className="text-xs text-muted-foreground truncate w-4/5">{conv.last_message}</p>
                     {conv.unread > 0 && <Badge variant="destructive" className="h-5 w-5 p-0 flex items-center justify-center text-xs">{conv.unread}</Badge>}
                   </div>
                 </div>

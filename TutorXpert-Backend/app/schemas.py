@@ -1,4 +1,3 @@
-# schemas.py
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Optional
@@ -139,6 +138,16 @@ class MessageOut(BaseModel):
     receiver_id: int
     text: str
     timestamp: datetime
+
+    class Config:
+        orm_mode = True
+
+class ConversationOut(BaseModel):
+    id: int
+    name: str
+    last_message: Optional[str]
+    timestamp: Optional[datetime]
+    unread: Optional[int] = 0
 
     class Config:
         orm_mode = True

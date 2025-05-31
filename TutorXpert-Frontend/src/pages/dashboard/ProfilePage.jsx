@@ -4,8 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input"; // ✅ 加在顶部
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 
 const ProfilePage = () => {
+  const { toast } = useToast();
   const [profile, setProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState(null);
@@ -55,10 +57,16 @@ const ProfilePage = () => {
       await axios.put(`${import.meta.env.VITE_API_BASE_URL}/profiles/${storedUser.id}`, formData);
       setProfile(formData);
       setIsEditing(false);
+      toast({
+        title: "Edited successfully!",
+        duration: 2000,
+        className: "bg-green-500 text-white shadow-md",
+      });
     } catch (err) {
       console.error("Failed to update profile", err);
     }
   };
+  
 
   const renderStudentProfile = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -85,113 +93,77 @@ const ProfilePage = () => {
     </div>
   );
 
+
   const renderTutorProfile = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
-        <strong>First Name:</strong>
-        {isEditing ? (
-          <input name="first_name" value={formData.first_name || ""} onChange={handleChange} />
-        ) : (
-          profile.first_name
-        )}
+        <label className="block mb-1 font-medium">First Name</label>
+        <Input name="first_name" value={formData.first_name || ""} onChange={handleChange} className="text-white" />
       </div>
       <div>
-        <strong>Last Name:</strong>
-        {isEditing ? (
-          <input name="last_name" value={formData.last_name || ""} onChange={handleChange} />
-        ) : (
-          profile.last_name
-        )}
+        <label className="block mb-1 font-medium">Last Name</label>
+        <Input name="last_name" value={formData.last_name || ""} onChange={handleChange} className="text-white" />
       </div>
       <div>
-        <strong>Phone:</strong>
-        {isEditing ? (
-          <input name="phone_number" value={formData.phone_number || ""} onChange={handleChange} />
-        ) : (
-          profile.phone_number || "N/A"
-        )}
+        <label className="block mb-1 font-medium">Phone Number</label>
+        <Input name="phone_number" value={formData.phone_number || ""} onChange={handleChange} className="text-white" />
       </div>
       <div>
-        <strong>Education Level:</strong>
-        {isEditing ? (
-          <input name="education_level" value={formData.education_level || ""} onChange={handleChange} />
-        ) : (
-          profile.education_level || "N/A"
-        )}
+        <label className="block mb-1 font-medium">Education Level</label>
+        <Input name="education_level" value={formData.education_level || ""} onChange={handleChange} className="text-white" />
       </div>
       <div>
-        <strong>Major:</strong>
-        {isEditing ? (
-          <input name="major" value={formData.major || ""} onChange={handleChange} />
-        ) : (
-          profile.major || "N/A"
-        )}
+        <label className="block mb-1 font-medium">Major</label>
+        <Input name="major" value={formData.major || ""} onChange={handleChange} className="text-white" />
       </div>
       <div>
-        <strong>Subjects:</strong>
-        {isEditing ? (
-          <input name="subjects" value={formData.subjects || ""} onChange={handleChange} />
-        ) : (
-          profile.subjects || "N/A"
-        )}
+        <label className="block mb-1 font-medium">Subjects</label>
+        <Input name="subjects" value={formData.subjects || ""} onChange={handleChange} className="text-white" />
       </div>
       <div>
-        <strong>Availability:</strong>
-        {isEditing ? (
-          <input name="availability" value={formData.availability || ""} onChange={handleChange} />
-        ) : (
-          profile.availability || "N/A"
-        )}
+        <label className="block mb-1 font-medium">Availability</label>
+        <Input name="availability" value={formData.availability || ""} onChange={handleChange} className="text-white" />
       </div>
       <div>
-        <strong>Address:</strong>
-        {isEditing ? (
-          <input name="address" value={formData.address || ""} onChange={handleChange} />
-        ) : (
-          profile.address || "N/A"
-        )}
+        <label className="block mb-1 font-medium">Address</label>
+        <Input name="address" value={formData.address || ""} onChange={handleChange} className="text-white" />
       </div>
       <div>
-        <strong>Experience:</strong>
-        {isEditing ? (
-          <select name="has_experience" value={formData.has_experience ? "yes" : "no"} onChange={(e) =>
+        <label className="block mb-1 font-medium">Working With Children Check</label>
+        <Input name="working_with_children_check" value={formData.working_with_children_check || ""} onChange={handleChange} className="text-white" />
+      </div>
+      <div>
+        <label className="block mb-1 font-medium">Certifications</label>
+        <Input name="certifications" value={formData.certifications || ""} onChange={handleChange} className="text-white" />
+      </div>
+      <div>
+        <label className="block mb-1 font-medium">Has Experience</label>
+        <select
+          name="has_experience"
+          value={formData.has_experience ? "yes" : "no"}
+          onChange={(e) =>
             setFormData((prev) => ({ ...prev, has_experience: e.target.value === "yes" }))
-          }>
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
-          </select>
-        ) : (
-          profile.has_experience ? "Yes" : "No"
-        )}
+          }
+          className="w-full bg-background text-white border border-input rounded-md px-3 py-2"
+        >
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
       </div>
       {formData.has_experience && (
         <div className="md:col-span-2">
-          <strong>Experience Details:</strong>
-          {isEditing ? (
-            <textarea name="experience_details" value={formData.experience_details || ""} onChange={handleChange} />
-          ) : (
-            profile.experience_details || "N/A"
-          )}
+          <label className="block mb-1 font-medium">Experience Details</label>
+          <textarea
+            name="experience_details"
+            value={formData.experience_details || ""}
+            onChange={handleChange}
+            className="w-full bg-background text-white border border-input rounded-md px-3 py-2"
+          />
         </div>
       )}
-      <div>
-        <strong>Working With Children Check:</strong>
-        {isEditing ? (
-          <input name="working_with_children_check" value={formData.working_with_children_check || ""} onChange={handleChange} />
-        ) : (
-          profile.working_with_children_check || "N/A"
-        )}
-      </div>
-      <div>
-        <strong>Certifications:</strong>
-        {isEditing ? (
-          <input name="certifications" value={formData.certifications || ""} onChange={handleChange} />
-        ) : (
-          profile.certifications || "N/A"
-        )}
-      </div>
     </div>
   );
+  
 
   return (
     <div className="min-h-screen bg-background text-foreground py-10 px-4 md:px-10">

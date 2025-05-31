@@ -13,7 +13,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # 根据地图边界 + 可选科目，返回 tutor 数据
 
 
-@router.get("/tutors/search", response_model=List[schemas.TutorOut], response_model_by_alias=True)
+@router.get("/search", response_model=List[schemas.TutorOut], response_model_by_alias=True)
 def search_tutors_by_map(
     north: float = Query(...),
     south: float = Query(...),
