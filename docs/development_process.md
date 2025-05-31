@@ -1,76 +1,66 @@
 # TutorXpert Progress Report
 
-## 📌 Project Overview
+## 📌 Overview
 
-**TutorXpert** is a web-based platform that connects students with local part-time tutors. It enables students to post tutoring requests and allows tutors to discover those requests based on subject expertise and geographical proximity.
+**TutorXpert** is a web platform that connects students with nearby part-time tutors.  
+It supports location-based matching, personalized profiles, and interactive task discovery.
 
-The platform emphasizes:
-- Local matching (map-based filtering)
-- Transparent user profiles
-- Efficient posting and browsing of tutoring opportunities
-
----
-## ✅ Core Features Fully Implemented (with User Experience Focus)
-
-
-
-
-
-
-
-
-# TutorXpert Progress Report
-
-## Project Overview
-
-TutorXpert is a web-based platform that connects students with local part-time tutors. It enables students to post tutoring requests and allows tutors to discover those requests based on subject expertise and geographical proximity.
-
-The platform emphasizes:
-Local matching (map-based filtering)  
-Transparent user profiles  
-Efficient posting and browsing of tutoring opportunities  
+Key concepts:  
+- 📍 Map-based local matching  
+- 👤 Transparent tutor/student profiles  
+- ✏️ Task posting and viewing workflows  
 
 ---
 
-## Core Features Fully Implemented (User Experience Focus)
+## ✅ Features Completed
 
-The following modules are fully functional and tested, covering both frontend interface and backend infrastructure. All work was independently implemented by the developer.
+### 👥 User System
 
-### 1. User System — Registration, Login, and Profile Management
+- ✅ Role-based registration: `Student` / `Tutor`  
+- ✅ Personalized dashboard after login  
+- ✅ Profile editing: name, contact, education, subjects  
+- ✅ Backend-integrated profile update and storage  
 
-Users can register as either a student or a tutor. After logging in, they are redirected to a personalized dashboard. Each user has a profile page showing their full name, phone number, address, education background (degree and major), and a brief introduction or teaching experience.
-
-Users can edit their profile, and updates are stored in the backend. Profile data is displayed in task and tutor listings and used in search and matching.
-
-This module involved designing UI forms, validating inputs, creating backend models (User, Profile), securing password storage, and integrating all components across frontend, backend, and database.
-
-### 2. Task Posting — Creating Tutoring Requests (Student Side)
-
-Students can post tasks by filling in a form with title, subject, description, budget, deadline, and location (address + map coordinates). Each task is linked to the student who posted it and automatically timestamped.
-
-Tasks are saved to the database and become instantly visible on the tutor map. This feature required frontend form development, backend schema design, datetime and coordinate handling, and full API integration.
-
-### 3. Task Discovery — Browse Tasks by Location (Tutor Side)
-
-Tutors can view student tasks on an interactive map. As they move or zoom the map, the list of visible tasks updates in real time. Each task appears both as a map pin and a card in the sidebar.
-
-Clicking a task opens a detail view showing subject, description, location, deadline, and poster information. This feature required implementing spatial filtering logic, card components, routing, and backend geolocation search.
-
-### 4. Tutor Discovery — Map-Based Tutor Search (Student Side)
-
-Students can explore tutors via a map interface, filtering by subject and location. Each tutor is shown on the map with a summary card, including qualifications and subject tags. Clicking the card leads to a detailed profile view.
-
-This module involved reusable components, subject-based filtering, and linking map selections to dynamic routing and profile rendering.
-
-### 5. Backend and Database Integration
-
-All data is stored in a PostgreSQL database with normalized schema. Tasks are linked to users through foreign keys, and timestamps (e.g. posted_date) are automatically managed by the server.
-
-The backend was developed using FastAPI with SQLAlchemy ORM. All endpoints were tested with realistic sample data to ensure data consistency and type safety.
+⛏️ Work: UI forms, backend models (`User`, `Profile`), role logic, data sync  
 
 ---
 
-In summary, all major end-user interactions — from account creation to posting, browsing, and viewing tutoring tasks or profiles — are fully developed. These workflows provide the foundation for meaningful tutor-student connections.
+### 📝 Task Posting (Student Side)
+
+- ✅ Post tasks with title, subject, budget, deadline, location  
+- ✅ Auto timestamp (`posted_date`), geo-coordinates saved  
+- ✅ Data stored in PostgreSQL, immediately visible on tutor side  
+
+⛏️ Work: Frontend form, API integration, schema with timestamp + coordinates  
+
+---
+
+### 🗺️ Task Discovery (Tutor Side)
+
+- ✅ Map-based view of nearby tasks  
+- ✅ Live filter by map boundary + subject  
+- ✅ Task list and detail page routing  
+
+⛏️ Work: Mapbox integration, dynamic API query, frontend routing  
+
+---
+
+### 🔍 Tutor Discovery (Student Side)
+
+- ✅ View tutors on map with filter by subject/location  
+- ✅ Tutor cards with summary info  
+- ✅ Detailed tutor profile page  
+
+⛏️ Work: Filter logic, reusable components, page linking  
+
+---
+
+### 🛠️ Backend & Data Integration
+
+- ✅ PostgreSQL schema: `User`, `Profile`, `Task`  
+- ✅ `posted_date` auto-managed by database  
+- ✅ FastAPI with full Pydantic validation  
+- ✅ Tested with multiple sample entries  
 
 ---
 
@@ -121,7 +111,7 @@ All listed modules were designed, implemented, and tested by a single developer.
 
 ---
 
-## Roadmap (Next Priorities)
+## Roadmap
 
 | Priority | Feature                     | Description                                      |
 |----------|-----------------------------|--------------------------------------------------|
@@ -134,7 +124,7 @@ All listed modules were designed, implemented, and tested by a single developer.
 
 ---
 
-## Developer Contribution & Effort Highlights
+## Highlights
 
 Full-stack development across frontend (React) and backend (FastAPI)  
 Database schema designed using PostgreSQL  
