@@ -54,14 +54,23 @@ const NewTaskPage = () => {
     }
   
     try {
-      const res = await axios.post("https://tutorxpert-backend.onrender.com/tasks", {
-        ...formData,
-        lat: -33.87,            // ✅ 临时写死，后续用定位或用户选择
+      const {
+        attachments, // ❌ 不传这个字段
+        ...payload
+      } = formData;
+  
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/tasks`, {
+        ...payload,
+        lat: -33.87,
         lng: 151.21,
         posted_by: "You",
-        posted_date: new Date().toISOString().slice(0, 10),
+        posted_date: new Date().toISOString(),  // ✅ ISO datetime string
         status: "Open",
-        user_id: 1              // ✅ 临时写死，后续替换为当前登录用户 ID
+        user_id: 1
+      }, {
+        headers: {
+          "Content-Type": "application/json"
+        }
       });
   
       toast({
@@ -80,6 +89,7 @@ const NewTaskPage = () => {
       setIsSubmitting(false);
     }
   };
+  
   
 
   const fadeIn = {
