@@ -94,20 +94,29 @@ No feedback system implemented. Planned: allow students to rate and review tutor
 
 ---
 
-## Work Summary (What Has Been Built)
+## Work Summary
 
-| Component                  | Status    | Description                                          |
-|----------------------------|-----------|------------------------------------------------------|
-| User registration & roles  | Done      | Supports student/tutor roles                         |
-| Profile editing            | Done      | Includes education, contact info, and subjects       |
-| Task creation              | Done      | Students can post tasks with map/location info       |
-| Task map filtering         | Done      | Tutors view tasks within map bounds + subject filter |
-| Task detail pages          | Done      | Each task has a full page view                       |
-| Tutor discovery            | Done      | Students can browse tutors with filters              |
-| Data schema validation     | Done      | Backend handles datetime, floats, strings, etc.      |
-| Database integration       | Done      | PostgreSQL used with sample task data preloaded      |
+| Component                        | Status    | Description                                                  |
+|----------------------------------|-----------|--------------------------------------------------------------|
+| User registration & roles        | Done      | Role-based login flow for students and tutors                |
+| Profile editing                  | Done      | Editable profile with name, contact, education, and subjects |
+| Task creation                    | Done      | Task form with subject, budget, deadline, and geolocation    |
+| Task map filtering               | Done      | Tutors filter tasks using map bounds + subject keywords      |
+| Task detail pages                | Done      | Full-page task view with all information displayed           |
+| Tutor discovery                  | Done      | Students browse tutors by map and subject filter             |
+| Data schema validation           | Done      | Pydantic + SQLAlchemy ensure type-safe, validated data       |
+| Database integration             | Done      | PostgreSQL with normalized models and foreign keys           |
+| Map integration (Tasks & Tutors) | Done      | Interactive map views with dynamic pin updates               |
+| Geolocation-based queries        | Done      | Backend handles lat/lng bounding box queries for filtering   |
+| Datetime & timezone handling     | Done      | Task timestamps auto-managed; compatible with API responses  |
+| Sample data population           | Done      | Pre-filled realistic task and tutor entries for testing/demo |
+| Frontend routing & navigation    | Done      | Page transitions for tasks, tutors, and profile views        |
+| API testing & debugging          | Done      | Manual validation of all endpoints with real data            |
+| UI component design              | Done      | Reusable cards, input fields, and layout elements            |
+| Form validation & feedback       | Done      | Frontend-level checks with user-friendly error messages      |
 
-All listed modules were designed, implemented, and tested by a single developer. This includes both frontend and backend systems.
+All modules were designed, developed, and tested independently by the same developer, across both frontend and backend layers. Work covers full-stack integration, business logic, and production-level data modeling.
+
 
 ---
 
