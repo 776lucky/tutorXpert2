@@ -117,9 +117,7 @@ Planned: Allow students to rate and review tutors after task completion.
 | Map integration (Tasks & Tutors) | ✅      | Interactive map views with dynamic pin updates               |
 | Geolocation-based queries        | ✅      | Backend handles lat/lng bounding box queries for filtering   |
 | Datetime & timezone handling     | ✅      | Task timestamps auto-managed; compatible with API responses  |
-| Sample data population           | ✅      | Pre-filled realistic task and tutor entries for testing/demo |
 | Frontend routing & navigation    | ✅      | Page transitions for tasks, tutors, and profile views        |
-| API testing & debugging          | ✅      | Manual validation of all endpoints with real data            |
 | UI component design              | ✅      | Reusable cards, input fields, and layout elements            |
 | Form validation & feedback       | ✅      | Frontend-level checks with user-friendly error messages      |
 
