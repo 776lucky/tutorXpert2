@@ -155,9 +155,9 @@ All modules were designed, developed, and tested independently by the same devel
 
 TutorXpert currently supports:
 
-- ✅ Core user flow from registration to task and tutor discovery  
-- ✅ Map-based, interactive experience for browsing nearby tasks or tutors  
-- ✅ Stable integration of frontend, backend, and PostgreSQL database  
+-  Core user flow from registration to task and tutor discovery  
+-  Map-based, interactive experience for browsing nearby tasks or tutors  
+-  Stable integration of frontend, backend, and PostgreSQL database  
 
 The platform is now ready for demonstration.  
 The next development phase will focus on enabling direct tutor-student interaction, bookings, and a complete task lifecycle experience.
