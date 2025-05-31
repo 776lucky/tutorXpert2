@@ -14,9 +14,6 @@ import MapView from "@/components/MapView";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-
-
-
 const parseSubjects = (subjects) => {
   if (Array.isArray(subjects)) return subjects;
   if (typeof subjects === "string") return subjects.split(',').map(s => s.trim());
@@ -39,6 +36,7 @@ const getDistanceKm = (lat1, lon1, lat2, lon2) => {
 
 const TutorsPage = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [tutors, setTutors] = useState([]);
   const [filteredTutors, setFilteredTutors] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -50,7 +48,7 @@ const TutorsPage = () => {
 
   const cardRefs = useRef({});
 
-  const navigate = useNavigate();
+
 
   // ✅ 第一次加载触发地图范围请求
   useEffect(() => {
@@ -131,18 +129,45 @@ const TutorsPage = () => {
   const handleSubjectFilter = value => setSubjectFilter(value);
   const handleRatingFilter = value => setRatingFilter(value);
 
-  const handleContactTutor = (tutor) => {
-    // ✅ 可选 toast 提示
-    toast({
-      title: "Connection Initiated",
-      description: `Secure channel request sent to ${tutor.name}.`,
-      duration: 3000,
-      className: "bg-card border-primary/50 text-foreground",
-    });
+  const handleContactTutor = async (tutor) => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    if (!user?.id) {
+      toast({
+        title: "Error",
+        description: "Please log in to initiate a conversation.",
+        variant: "destructive",
+      });
+      return;
+    }
   
-    // ✅ 跳转并携带 tutor_id 参数
-    navigate(`/dashboard/messages?tutor_id=${tutor.id}`);
+    try {
+      // ✅ 尝试发送初始化消息（后端会自动去重）
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/messages`, {
+        sender_id: user.id,
+        receiver_id: tutor.id,
+        text: "Hi! I’m interested in your tutoring service.",
+      });
+  
+      // ✅ 成功后 toast
+      toast({
+        title: "Connection Initiated",
+        description: `Secure channel request sent to ${tutor.name}.`,
+        duration: 3000,
+        className: "bg-card border-primary/50 text-foreground",
+      });
+  
+      // ✅ 跳转
+      navigate(`/dashboard/messages?tutor_id=${tutor.id}`);
+    } catch (error) {
+      console.error("❌ Failed to send message", error);
+      toast({
+        title: "Failed to connect",
+        description: "An error occurred while contacting the tutor.",
+        variant: "destructive",
+      });
+    }
   };
+  
 
   const handleMapClick = (id) => {
     const element = cardRefs.current[id];
