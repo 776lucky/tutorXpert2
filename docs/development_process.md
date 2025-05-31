@@ -120,34 +120,36 @@ All modules were designed, developed, and tested independently by the same devel
 
 ---
 
-## Roadmap
+## 📌 Roadmap
 
 | Priority | Feature                     | Description                                      |
 |----------|-----------------------------|--------------------------------------------------|
-| High     | Task application flow       | Tutors apply to tasks; students accept/reject    |
-| High     | Messaging or contact access | Allow contact after task match                   |
-| Medium   | Task status transitions     | Let users mark tasks as in-progress or completed |
-| Medium   | Scheduling availability     | Tutors define time slots                         |
-| Low      | Ratings & feedback          | Students leave reviews after task completion     |
-| Low      | UI polish & validations     | Improve input validation and interface flow      |
+| 🔴 High  | Task application flow       | Tutors apply to tasks; students review/respond   |
+| 🔴 High  | Messaging or contact access | Unlock contact info or enable simple messaging   |
+| 🟠 Medium| Task status transitions     | Task status flows: Open → In Progress → Completed|
+| 🟠 Medium| Scheduling availability     | Tutors define available time slots; students book|
+| 🟢 Low   | Ratings & feedback          | Students leave reviews after task completion     |
+| 🟢 Low   | UI polish & validations     | Improve input feedback and frontend UX           |
 
 ---
 
-## Highlights
+## 🔧 Highlights
 
-Full-stack development across frontend (React) and backend (FastAPI)  
-Database schema designed using PostgreSQL  
-Geolocation-based filtering logic implemented for map components  
-Tested task creation, discovery, and user interactions thoroughly  
-Resolved frontend-backend compatibility issues (e.g., datetime formats, API validation)  
+- ✅ Full-stack development using React (frontend) and FastAPI (backend)  
+- ✅ Schema modeling and database integration with PostgreSQL  
+- ✅ Dynamic map-based filtering and geolocation querying implemented  
+- ✅ Strong data validation and error handling across all layers  
+- ✅ All system modules designed, coded, and tested by one developer  
 
 ---
 
-## Conclusion
+## 📈 Conclusion
 
 TutorXpert currently supports:
-Core user workflows (register → post → browse)  
-Map-based task and tutor discovery  
-Clean data integration with functional UI and sample data  
 
-The platform is now ready for demonstration and further development. The next stage will focus on enabling tutor-student interaction and completing the full matching lifecycle.
+- ✅ Core user flow from registration to task and tutor discovery  
+- ✅ Map-based, interactive experience for browsing nearby tasks or tutors  
+- ✅ Stable integration of frontend, backend, and PostgreSQL database  
+
+The platform is now ready for demonstration.  
+The next development phase will focus on enabling direct tutor-student interaction, bookings, and a complete task lifecycle experience.
