@@ -10,54 +10,94 @@ The platform emphasizes:
 - Efficient posting and browsing of tutoring opportunities
 
 ---
+## ✅ Core Features Fully Implemented (with User Experience Focus)
 
-## ✅ Core Features Fully Implemented
+> The following modules are fully functional and tested, covering both frontend interface and backend infrastructure. All were independently implemented by the developer.
 
-> All features below are fully developed and tested, with frontend, backend, and database connected. All development work is done independently by the developer.
+### 1. User System — Registration, Login, and Profile Management
+- Users can sign up either as a **student** or **tutor**
+- After logging in, users are redirected to a **personalized dashboard**
+- Every user has a **dedicated profile page** with:
+  - Full name, phone number, address
+  - Education background (degree, major)
+  - A brief introduction or teaching experience
+- Users can **edit their profile information**, and changes are synced with the backend database
+- Profile data is used in search displays and detail pages, ensuring relevance and transparency
 
-### 1.  User System
-- Supports **two user roles**: `Student` and `Tutor`
-- Users can **register, log in, and edit their profiles**
-- Profile includes:
-  - Full name, contact number, address
-  - Education level and major
-  - Subject expertise and personal introduction
-
----
-
-### 2.  Task Posting (for Students)
-- Students can **create tutoring tasks** including:
-  - Subject, description, budget, location (address + map), deadline
-- Each task is linked to the student who posted it
-- The system automatically records **posting time (`posted_date`)**
-- Tasks are stored in the central PostgreSQL database
+  Work involved:
+- UI components for forms and data rendering
+- Backend models (`User`, `Profile`) and relationships
+- Secure password handling and role-based logic
+- Frontend → API → database integration for all user data
 
 ---
 
-### 3.  Task Discovery (for Tutors)
-- Tutors can browse **student tasks on an interactive map**
-- Map filters results based on:
-  - Current map boundaries
-  - Optional subject keywords
-- Tasks are clickable to view **detailed descriptions and metadata**
+### 2. Task Posting — Creating and Saving Tutoring Requests
+- Students can fill out a form to post a **new tutoring task**, including:
+  - Task title, subject (e.g., Math, Biology), description
+  - Budget range (e.g., "$40–$80"), deadline
+  - Physical address and location (captured via map coordinates)
+- The system automatically captures the **posting time** (`posted_date`) and links the task to the student
+- After submission, tasks are immediately visible on the map to tutors
+
+  Work involved:
+- Form UI with input validation
+- Backend schema with datetime defaults, foreign key constraints
+- Map integration for address geolocation
+- Error handling and success feedback for task submission
 
 ---
 
-### 4.  Tutor Discovery (for Students)
-- Students can browse tutors via **map-based view**
-- Tutors are filterable by:
-  - Subject
-  - Geographic location
-- Clicking a tutor opens a **profile detail page** with qualifications and background
+### 3. Task Discovery — Viewing Student Requests on a Map (for Tutors)
+- Tutors can access a **task discovery page** with a live map view
+- Tasks are **displayed as pins on the map**, representing real locations from the database
+- Tutors can move or zoom the map, triggering real-time updates of visible tasks
+- Tasks are also shown as a **scrollable list** beside the map
+- Tutors can click a task to open a **dedicated detail page** showing:
+  - Description, subject, budget, deadline, address, student info (name/role)
+
+  Work involved:
+- Building interactive map with boundary-based filtering
+- Implementing frontend map movement event handling
+- Backend logic to search tasks based on latitude/longitude box
+- Linking frontend cards to detailed views with dynamic routing
 
 ---
 
-### 5.  Backend & Database Implementation
-- All data (users, profiles, tasks) stored in **PostgreSQL**
-- Backend developed using **FastAPI**
-- Data schemas fully validated
-- Timezones and map coordinates handled properly
-- Multiple sample tasks inserted and used for testing
+### 4. Tutor Discovery — Finding Tutors Based on Location and Subject (for Students)
+- Students can browse available tutors on a **map-based interface**
+- Tutors are filtered based on:
+  - Map boundaries (nearby only)
+  - Subject expertise (e.g., English, Science)
+- Each tutor is shown with a **profile card** summarizing:
+  - Name, degree, subjects, brief introduction
+- Clicking a tutor opens a **detail page** with full profile information
+
+  Work involved:
+- Designing consistent UI across cards and profile pages
+- Creating mock tutor data aligned with real structure
+- Dynamic frontend filtering based on map and subject
+- Modular components reusable for task and tutor views
+
+---
+
+### 5.  Backend Infrastructure & Database Integration
+- All data is stored in a robust **PostgreSQL database**
+- Tasks and users are relationally linked (foreign key: `user_id`)
+- `posted_date` fields are automatically populated at creation
+- All fields (e.g., budget, lat/lng, subject, description) are fully supported in both storage and retrieval
+- Sample data has been inserted for development and testing
+
+  Work involved:
+- Designing normalized database schema
+- Handling timezone-aware datetimes and location types
+- SQL migration + validation
+- Debugging type conflicts between frontend and backend (e.g., `datetime` vs `string`)
+
+---
+
+> In summary, all major end-user interactions — from account creation to posting, browsing, and viewing tutoring tasks or profiles — are fully developed. These workflows provide the foundation for meaningful tutor-student connections.
+
 
 ---
 
