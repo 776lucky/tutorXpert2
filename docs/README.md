@@ -186,7 +186,7 @@ Planned: Allow students to rate and review tutors after task completion.
 
 ## 🚧 Remaining Work Before Launch
 
-### 1. 🧩 Functional Completion (Core Interaction Loop)
+### 🧩 Functional Completion (Core Interaction Loop)
 
 | Feature                               | Required | Status     | Description                                                                 |
 |---------------------------------------|----------|------------|-----------------------------------------------------------------------------|
