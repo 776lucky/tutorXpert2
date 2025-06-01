@@ -2,6 +2,9 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, Field
+from typing import List
+from pydantic import validator
+
 
 def to_camel(string: str) -> str:
     parts = string.split('_')
@@ -95,21 +98,28 @@ class TutorOut(BaseModel):
     experience: Optional[str] = None
     hourly_rate: Optional[float] = Field(None, alias="hourlyRate")
     rating: Optional[float] = None
-    subjects: Optional[str] = None
+    subjects: Optional[List[str]] = None
     address: Optional[str] = None
     lat: Optional[float] = None
     lng: Optional[float] = None
-    name: Optional[str] = Field(None, alias="name")  # ✅ 可选字段，避免初始报错
+    name: Optional[str] = Field(None, alias="name")
 
     class Config:
         from_attributes = True
         populate_by_name = True
 
+    @validator("subjects", pre=True)
+    def split_subjects(cls, v):
+        if isinstance(v, str):
+            return [s.strip() for s in v.split(",")]
+        return v
+
     @classmethod
     def model_validate(cls, obj):
         base = super().model_validate(obj)
-        base.name = f"{base.first_name} {base.last_name}"  # ✅ 安全拼接
+        base.name = f"{base.first_name} {base.last_name}"
         return base
+
 
 
 class TaskCreate(BaseModel):

@@ -21,27 +21,53 @@ import {
   Calendar as CalendarIcon
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import mockTutors from "@/data/mockTutors";
+
+import { useEffect, useState } from "react";
 import Calendar from 'react-calendar';
+import axios from "axios";
 import 'react-calendar/dist/Calendar.css';
 
 const TutorProfilePage = () => {
   const { id } = useParams();
   const { toast } = useToast();
-  const tutor = mockTutors.find(t => String(t.id) === id);
+  const [tutor, setTutor] = useState(null);
 
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
   };
 
+  useEffect(() => {
+    const fetchTutor = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/tutors/${id}`);
+        const data = res.data;
+  
+        // ✅ 修复 subjects 类型为数组
+        if (typeof data.subjects === "string") {
+          data.subjects = data.subjects.split(",").map(s => s.trim());
+        }
+  
+        setTutor(data);
+      } catch (err) {
+        console.error("❌ Failed to fetch tutor:", err);
+      }
+    };
+    fetchTutor();
+  }, [id]);
+  
+  
+
+
+
   if (!tutor) {
     return (
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-        <p>Tutor not found.</p>
+        <p>Loading tutor details...</p>
       </div>
     );
   }
+  
 
   return (
     <motion.div
@@ -69,14 +95,17 @@ const TutorProfilePage = () => {
           <div className="text-base leading-relaxed text-muted-foreground">{tutor.bio}</div>
 
           <div className="flex flex-wrap gap-2">
-            {tutor.subjects.map((subj, idx) => (
+            {tutor.subjects?.map((subj, idx) => (
               <Badge key={idx} className="text-sm">{subj}</Badge>
             ))}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-muted-foreground">
             <div className="flex items-center"><Star className="h-4 w-4 mr-2 text-yellow-400" /> Rating: {tutor.rating}</div>
-            <div className="flex items-center"><Clock className="h-4 w-4 mr-2 text-blue-400" /> Rate: ${tutor.hourlyRate}/hr</div>
+            <div className="flex items-center">
+              <Clock className="h-4 w-4 mr-2 text-blue-400" />
+              Rate: ${tutor.hourlyRate ?? tutor.hourly_rate}/hr
+            </div>
             <div className="flex items-center"><Award className="h-4 w-4 mr-2 text-green-400" /> {tutor.experience}</div>
             <div className="flex items-center"><BookOpen className="h-4 w-4 mr-2 text-violet-400" /> {tutor.education}</div>
           </div>
@@ -86,7 +115,7 @@ const TutorProfilePage = () => {
               <h3 className="text-md font-semibold text-primary mb-2">Availability Calendar</h3>
               <div className="rounded-lg overflow-hidden border border-border bg-muted/30 p-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-muted-foreground mb-4">
-                  {tutor.availableTime.map((slot, idx) => (
+                  {tutor.availableTime?.map((slot, idx) => (
                     <div key={idx} className="flex items-center">
                       <CalendarIcon className="h-4 w-4 mr-2 text-cyan-400" />
                       <span>{slot.day}: {slot.start} - {slot.end}</span>
@@ -101,7 +130,7 @@ const TutorProfilePage = () => {
             <div>
               <h3 className="text-md font-semibold text-primary mb-1">Certifications</h3>
               <ul className="list-disc pl-6 text-muted-foreground text-sm">
-                {tutor.certifications.map((cert, idx) => (
+                {tutor.certifications?.map((cert, idx) => (
                   <li key={idx}>{cert}</li>
                 ))}
               </ul>
@@ -112,7 +141,7 @@ const TutorProfilePage = () => {
             <div>
               <h3 className="text-md font-semibold text-primary mb-1">Student Reviews</h3>
               <div className="space-y-2">
-                {tutor.reviews.map((rev, idx) => (
+                {tutor.reviews?.map((rev, idx) => (
                   <div key={idx} className="p-3 bg-muted/30 rounded-lg shadow-inner">
                     <p className="text-sm"><strong>{rev.user}</strong>: {rev.comment}</p>
                     <p className="text-xs text-yellow-500">Rating: {rev.rating}</p>

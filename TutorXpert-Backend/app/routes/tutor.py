@@ -62,3 +62,18 @@ def login_tutor(user: schemas.UserLogin, db: Session = Depends(get_db)):
         "role": existing_user.role,
         "first_name": profile.first_name if profile else "User"
     }
+
+
+@router.get("/{tutor_id}", response_model=schemas.TutorOut, response_model_by_alias=True)
+def get_tutor_by_id(tutor_id: int, db: Session = Depends(get_db)):
+    # 查询 Profile 和关联 User（确保是 tutor 身份）
+    tutor = db.query(models.Profile).join(models.User).filter(
+        models.Profile.user_id == models.User.id,
+        models.User.role == "tutor",
+        models.Profile.id == tutor_id
+    ).first()
+
+    if not tutor:
+        raise HTTPException(status_code=404, detail="Tutor not found")
+
+    return schemas.TutorOut.model_validate(tutor)
