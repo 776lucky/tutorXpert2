@@ -12,7 +12,37 @@ Key concepts:
 
 ---
 
+### 🚀 Deployment & Hosting
+
+- ✅ Frontend hosted on Render: `https://tutorxpert-frontend.onrender.com`
+- ✅ Backend hosted on Render: `https://tutorxpert-backend-9qxd.onrender.com`
+- ✅ CORS configured via FastAPI middleware
+
+
+## 🧭 Functional Flow Currently Supported
+
+**Student Flow:**  
+1. Register as a student
+2. Edit Profile: Fill in name, education, contact, subjects, etc.
+3. Post Task: Provide task details: title, subject, budget, address, coordinates, and deadline
+4. Browse Tutors on the map-based Tutor Discovery page
+5. Contact Tutor by sending a message
+6. Receive Applications from tutors for posted tasks (planned: review/respond)
+
+**Tutor Flow:**  
+1. Register as a tutor
+2. Edit Profile with relevant info and subjects
+3. Browse Available Tasks using filters and map view
+4. Apply to Task by clicking “Apply Now”
+5. Track Applications under "My Listings" dashboard view
+6. Message Student (if messaging module is used/enabled)
+
+The platform currently supports the **complete flow from task posting to discovery**, for both students and tutors.
+
+
 ## ✅ Features Completed
+
+---
 
 ### 👥 User System
 
@@ -92,37 +122,6 @@ Key concepts:
 - ✅ PostgreSQL schema: `users`, `profile`, `tasks`, `task_applications`, `messages`
 - ✅ FastAPI with full Pydantic validation  
 - ✅ Role-based access checks in both frontend and backend
-
----
-
-### 🚀 Deployment & Hosting
-
-- ✅ Frontend hosted on Render: `https://tutorxpert-frontend.onrender.com`
-- ✅ Backend hosted on Render: `https://tutorxpert-backend-9qxd.onrender.com`
-- ✅ CORS configured via FastAPI middleware
-
-
-## 🧭 Functional Flow Currently Supported
-
-**Student Flow:**  
-1. Register as a student
-2. Edit Profile: Fill in name, education, contact, subjects, etc.
-3. Post Task: Provide task details: title, subject, budget, address, coordinates, and deadline
-4. Browse Tutors on the map-based Tutor Discovery page
-5. Contact Tutor by sending a message
-6. Receive Applications from tutors for posted tasks (planned: review/respond)
-
-**Tutor Flow:**  
-1. Register as a tutor
-2. Edit Profile with relevant info and subjects
-3. Browse Available Tasks using filters and map view
-4. Apply to Task by clicking “Apply Now”
-5. Track Applications under "My Listings" dashboard view
-6. Message Student (if messaging module is used/enabled)
-
-
-
-The platform currently supports the **complete flow from task posting to discovery**, for both students and tutors.
 
 ---
 
