@@ -46,3 +46,27 @@ def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_task)
     return new_task
+
+@router.post("/task_applications", response_model=schemas.TaskApplicationOut)
+def create_task_application(application: schemas.TaskApplicationCreate, db: Session = Depends(get_db)):
+    # 检查是否重复申请
+    existing = db.query(models.TaskApplication).filter_by(
+        task_id=application.task_id,
+        tutor_id=application.tutor_id
+    ).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="You have already applied for this task.")
+
+    new_app = models.TaskApplication(
+        task_id=application.task_id,
+        tutor_id=application.tutor_id
+    )
+    db.add(new_app)
+    db.commit()
+    db.refresh(new_app)
+    return new_app
+
+@router.get("/my_applications", response_model=List[schemas.TaskApplicationSimple])
+def get_my_applications(tutor_id: int, db: Session = Depends(get_db)):
+    applications = db.query(models.TaskApplication).filter_by(tutor_id=tutor_id).all()
+    return applications

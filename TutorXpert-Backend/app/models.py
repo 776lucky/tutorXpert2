@@ -73,3 +73,13 @@ class Message(Base):
     receiver = relationship("User", foreign_keys=[receiver_id])
 
 
+
+class TaskApplication(Base):
+    __tablename__ = "task_applications"
+
+    id = Column(Integer, primary_key=True, index=True)
+    task_id = Column(Integer, ForeignKey("tasks.id", ondelete="CASCADE"), nullable=False)
+    tutor_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    applied_at = Column(DateTime(timezone=True), server_default=func.now())
+    status = Column(String, default="pending")
+

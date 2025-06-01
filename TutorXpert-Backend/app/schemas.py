@@ -1,8 +1,6 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime
-from typing import Optional
-from pydantic import BaseModel, Field
-from typing import List
+from typing import Optional, List
 from pydantic import validator
 
 
@@ -158,6 +156,28 @@ class ConversationOut(BaseModel):
     last_message: Optional[str]
     timestamp: Optional[datetime]
     unread: Optional[int] = 0
+
+    class Config:
+        orm_mode = True
+
+class TaskApplicationCreate(BaseModel):
+    task_id: int
+    tutor_id: int
+
+class TaskApplicationOut(BaseModel):
+    id: int
+    task_id: int
+    tutor_id: int
+    applied_at: datetime
+    status: str
+
+    class Config:
+        orm_mode = True
+
+
+class TaskApplicationSimple(BaseModel):
+    task_id: int
+    status: str
 
     class Config:
         orm_mode = True

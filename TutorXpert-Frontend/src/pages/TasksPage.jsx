@@ -15,7 +15,7 @@ import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useParams } from "react-router-dom";
-
+import { useAuth } from "@/context/AuthContext";
 
 
 
@@ -36,10 +36,12 @@ const getDistanceFromLatLng = (lat1, lng1, lat2, lng2) => {
 
 
 const TasksPage = () => {
+  const { user } = useAuth();  // user.id 即为当前 tutor 的 ID
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);  // ✅ 用于存储点击的任务详情
   const { id } = useParams();
   const { toast } = useToast();
+  const [appliedTaskIds, setAppliedTaskIds] = useState(new Set()); // 记录已申请任务
   
   const fetchTasksByBounds = async (bounds) => {
     try {
@@ -63,6 +65,37 @@ const TasksPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const taskRefs = useRef({});
 
+
+  const handleApply = async (task) => {
+    try {
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/task_applications`, {
+        task_id: task.id,
+        tutor_id: user.id,
+      });
+      toast({
+        title: "Application Submitted",
+        description: `You have applied for "${task.title}".`,
+      });
+      setAppliedTaskIds(prev => new Set(prev).add(task.id));  // 记录已申请任务
+    } catch (err) {
+      if (err.response?.status === 400) {
+        toast({
+          title: "Already Applied",
+          description: "You have already applied for this task.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Something went wrong while applying.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+  
+
+
   const handleViewTaskDetails = async (taskId) => {
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/tasks/${taskId}`);
@@ -77,6 +110,15 @@ const TasksPage = () => {
       });
     }
   };
+
+  // 用于实现 页面加载时就知道哪些任务已经被当前 tutor 申请过 
+  useEffect(() => {
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/my_applications?tutor_id=${user.id}`)
+      .then(res => {
+        const appliedIds = new Set(res.data.map(app => app.task_id));
+        setAppliedTaskIds(appliedIds);
+      });
+  }, []);
 
   useEffect(() => {
     if (id) {
@@ -287,14 +329,10 @@ const TasksPage = () => {
 
                     <Button
                       className="flex-1"
-                      onClick={() =>
-                        toast({
-                          title: "Application Submitted",
-                          description: `You have expressed interest in "${task.title}".`,
-                        })
-                      }
+                      onClick={() => handleApply(task)}
+                      disabled={appliedTaskIds.has(task.id)}
                     >
-                      Apply Now <Zap className="ml-2 h-4 w-4 text-blue-400" />
+                      {appliedTaskIds.has(task.id) ? "Applied" : "Apply Now"} <Zap className="ml-2 h-4 w-4 text-blue-400" />
                     </Button>
                   </CardFooter>
 
