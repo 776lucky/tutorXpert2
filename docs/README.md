@@ -53,14 +53,6 @@ Key concepts:
 
 ⛏️ Work: Filter logic, reusable components, page linking  
 
----
-
-### 🛠️ Backend & Data Integration
-
-- ✅ PostgreSQL schema: `User`, `Profile`, `Task`  
-- ✅ `posted_date` auto-managed by database  
-- ✅ FastAPI with full Pydantic validation  
-- ✅ Tested with multiple sample entries  
 
 ---
 
@@ -83,13 +75,50 @@ Key concepts:
 
 ⛏️ Work: Message data model, FastAPI routing, front-end dialogue components and navigation jumps
 
+---
+
+### 📌 Task Application Flow (Tutor Side)
+
+- ✅ Tutors can browse student-posted tasks with filters and map view
+- ✅ Click **Apply Now** to submit application for a specific task
+- ✅ Applications are stored in `task_applications` table with status tracking
+- ✅ Prevents duplicate applications from the same tutor
+- ✅ Dashboard → My Listings shows tasks tutor has applied to (live from DB)
+
+---
+
+### 🛠️ Backend & Data Integration
+
+- ✅ PostgreSQL schema: `users`, `profile`, `tasks`, `task_applications`, `messages`
+- ✅ FastAPI with full Pydantic validation  
+- ✅ Role-based access checks in both frontend and backend
+
+---
+
+### 🚀 Deployment & Hosting
+
+- ✅ Frontend hosted on Render: `https://tutorxpert-frontend.onrender.com`
+- ✅ Backend hosted on Render: `https://tutorxpert-backend-9qxd.onrender.com`
+- ✅ CORS configured via FastAPI middleware
+
+
 ## 🧭 Functional Flow Currently Supported
 
 **Student Flow:**  
-✅ Register → Edit Profile → Post Task → View Tutors → Contact Tutor via Message
+1. Register as a student
+2. Edit Profile: Fill in name, education, contact, subjects, etc.
+3. Post Task: Provide task details: title, subject, budget, address, coordinates, and deadline
+4. Browse Tutors on the map-based Tutor Discovery page
+5. Contact Tutor by sending a message
+6. Receive Applications from tutors for posted tasks (planned: review/respond)
 
 **Tutor Flow:**  
-✅ Register → Edit Profile → View Tasks → View Details → Receive and Reply to Messages
+1. Register as a tutor
+2. Edit Profile with relevant info and subjects
+3. Browse Available Tasks using filters and map view
+4. Apply to Task by clicking “Apply Now”
+5. Track Applications under "My Listings" dashboard view
+6. Message Student (if messaging module is used/enabled)
 
 
 
@@ -97,20 +126,17 @@ The platform currently supports the **complete flow from task posting to discove
 
 ---
 
-## 📌 Key Features Still Needed for Matching
+## 📌 Key Features
 
 To enable full two-way interaction between students and tutors, the following features are planned:
 
-### 📨 Task Application System  
-Tutors cannot yet apply to tasks.  
-Planned: Tutors submit applications → Students review & accept.
+### 💬 Messages
+Student can send message to tutor now
+Planned: Design tutor message function, and prevent tutor students from leaving the platform to receive orders (IMPORTANT!!)
 
-### 💬 Communication Channel  
-No way for users to contact each other yet.  
-Planned: Show contact info after matching or implement a basic messaging system.
-
-### 🔄 Task Status Updates  
-Tasks remain in `Open` state.  
+### 🔄 Tasks
+Student can post tasks
+Tutor can apply tasks, and can see applied tasks in -->dashboard-->MyListings
 Planned: Enable transitions such as `Open → In Progress → Completed`.
 
 ### 📅 Time Scheduling  
@@ -125,58 +151,47 @@ Planned: Allow students to rate and review tutors after task completion.
 
 ## Work Summary
 
-| Component                        | Status    | Description                                                  |
-|----------------------------------|-----------|--------------------------------------------------------------|
-| User registration & roles        | ✅      | Role-based login flow for students and tutors                |
-| Profile editing                  | ✅      | Editable profile with name, contact, education, and subjects |
-| Task creation                    | ✅      | Task form with subject, budget, deadline, and geolocation    |
-| Task map filtering               | ✅      | Tutors filter tasks using map bounds + subject keywords      |
-| Task detail pages                | ✅      | Full-page task view with all information displayed           |
-| Tutor discovery                  | ✅      | Students browse tutors by map and subject filter             |
-| Data schema validation           | ✅      | Pydantic + SQLAlchemy ensure type-safe, validated data       |
-| Database integration             | ✅      | PostgreSQL with normalized models and foreign keys           |
-| Map integration (Tasks & Tutors) | ✅      | Interactive map views with dynamic pin updates               |
-| Geolocation-based queries        | ✅      | Backend handles lat/lng bounding box queries for filtering   |
-| Datetime & timezone handling     | ✅      | Task timestamps auto-managed; compatible with API responses  |
-| Frontend routing & navigation    | ✅      | Page transitions for tasks, tutors, and profile views        |
-| UI component design              | ✅      | Reusable cards, input fields, and layout elements            |
-| Form validation & feedback       | ✅      | Frontend-level checks with user-friendly error messages      |
+## Work Summary
 
-All modules were designed, developed, and tested independently by the same developer, across both frontend and backend layers. Work covers full-stack integration, business logic, and production-level data modeling.
+| Component                        | Status | Description                                                |
+|----------------------------------|--------|------------------------------------------------------------|
+| User registration & roles        | ✅     | Role-based login flow for students and tutors              |
+| Profile editing                  | ✅     | User info update: name, education, contact, subjects       |
+| Task creation & listing          | ✅     | Students post tasks with subject, budget, location, deadline |
+| Task discovery & filtering       | ✅     | Tutors browse/filter tasks by subject + map boundary       |
+| Tutor discovery                  | ✅     | Students browse tutors via subject + location filter       |
+| Task detail page                 | ✅     | Dedicated page with full task info                         |
+| Application flow (tutor)         | ✅     | Tutors apply to tasks; duplicates prevented                |
+| Messaging system (student→tutor) | ✅     | Students initiate chat; stored in DB                       |
+| Database & schema validation     | ✅     | PostgreSQL with Pydantic/SQLAlchemy                        |
+| Geolocation & map integration    | ✅     | Location-aware search for tasks/tutors                     |
+| Frontend UI & navigation         | ✅     | Routed pages, reusable components, and map-based UI        |
+| Form handling & feedback         | ✅     | Input validation with user-friendly error messages         |
+
+> All modules were designed, developed, and tested independently by the same developer, across both frontend and backend layers. Work covers full-stack integration, business logic, and production-level data modeling.
 
 
 ---
 
 ## 📌 Roadmap
 
-| Priority | Feature                     | Description                                      |
-|----------|-----------------------------|--------------------------------------------------|
-| 🔴 High  | Task application flow       | Tutors apply to tasks; students review/respond   |
-| 🔴 High  | Messaging enhancement       | Support updates, notifications, and moderation   |
-| 🟠 Medium| Task status transitions     | Task status flows: Open → In Progress → Completed|
-| 🟠 Medium| Scheduling availability     | Tutors define available time slots; students book|
-| 🟢 Low   | Ratings & feedback          | Students leave reviews after task completion     |
-| 🟢 Low   | UI polish & validations     | Improve input feedback and frontend UX           |
-
----
-
-## 🔧 Highlights
-
-- ✅ Full-stack development using React (frontend) and FastAPI (backend)  
-- ✅ Schema modeling and database integration with PostgreSQL  
-- ✅ Dynamic map-based filtering and geolocation querying implemented  
-- ✅ Strong data validation and error handling across all layers  
-- ✅ All system modules designed, coded, and tested by one developer  
+| Priority | Feature                     | Description                                                  |
+|----------|-----------------------------|--------------------------------------------------------------|
+| 🔴 High  | Tutor → Task application     | ✅ Implemented: Tutors apply to tasks; tracked in DB         |
+| 🟠 Medium| Task status transitions     | Planned: Open → In Progress → Completed                      |
+| 🟠 Medium| Scheduling availability     | Planned: Tutors define time slots; students book             |
+| 🟢 Low   | Messaging enhancement       | Planned: Tutor messaging flow + contact bypass safeguards    |
+| 🟢 Low   | Ratings & feedback          | Planned: Post-task review and rating system                  |
+| 🟢 Low   | UI polish & validations     | Planned: UX refinement and stronger frontend validations     |
 
 ---
 
 ## 📈 Conclusion
 
-TutorXpert currently supports:
+TutorXpert currently enables:
 
--  Core user flow from registration to task and tutor discovery  
--  Map-based, interactive experience for browsing nearby tasks or tutors  
--  Stable integration of frontend, backend, and PostgreSQL database  
+-  End-to-end user journeys for both students and tutors  
+-  Map-based exploration of tasks (tutor) and tutors (student)  
+-  Real-time application submissions + dashboard tracking   
 
-The platform is now ready for demonstration.  
-The next development phase will focus on enabling direct tutor-student interaction, bookings, and a complete task lifecycle experience.
+🎯 The next development phase will focus on enabling tutor-initiated messaging, time slot scheduling, and full task lifecycle (matching → completion).
