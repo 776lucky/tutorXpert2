@@ -67,6 +67,15 @@ const TasksPage = () => {
 
 
   const handleApply = async (task) => {
+    if (!user?.id) {
+      toast({
+        title: "Not Logged In",
+        description: "Please log in as a tutor to apply for tasks.",
+        variant: "destructive",
+      });
+      return;
+    }
+  
     try {
       const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/task_applications`, {
         task_id: task.id,
@@ -76,7 +85,7 @@ const TasksPage = () => {
         title: "Application Submitted",
         description: `You have applied for "${task.title}".`,
       });
-      setAppliedTaskIds(prev => new Set(prev).add(task.id));  // 记录已申请任务
+      setAppliedTaskIds((prev) => new Set(prev).add(task.id));
     } catch (err) {
       if (err.response?.status === 400) {
         toast({
@@ -93,6 +102,7 @@ const TasksPage = () => {
       }
     }
   };
+  
   
 
 
@@ -113,12 +123,22 @@ const TasksPage = () => {
 
   // 用于实现 页面加载时就知道哪些任务已经被当前 tutor 申请过 
   useEffect(() => {
+    if (!user?.id) return;  // ✅ 等 user 加载完成后再发请求
+  
     axios.get(`${import.meta.env.VITE_API_BASE_URL}/my_applications?tutor_id=${user.id}`)
       .then(res => {
         const appliedIds = new Set(res.data.map(app => app.task_id));
         setAppliedTaskIds(appliedIds);
+      })
+      .catch(err => {
+        console.error("Failed to fetch applied tasks", err);
+        toast({
+          title: "Error",
+          description: "Unable to load your applied tasks.",
+          variant: "destructive",
+        });
       });
-  }, []);
+  }, [user]);  // ✅ 添加 user 作为依赖项
 
   useEffect(() => {
     if (id) {

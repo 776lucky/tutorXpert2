@@ -70,3 +70,25 @@ def create_task_application(application: schemas.TaskApplicationCreate, db: Sess
 def get_my_applications(tutor_id: int, db: Session = Depends(get_db)):
     applications = db.query(models.TaskApplication).filter_by(tutor_id=tutor_id).all()
     return applications
+
+
+@router.get("/tutor/applied_tasks", response_model=List[schemas.TaskWithApplicationStatus])
+def get_applied_tasks(tutor_id: int, db: Session = Depends(get_db)):
+    results = (
+        db.query(models.Task, models.TaskApplication.status)
+        .join(models.TaskApplication, models.Task.id == models.TaskApplication.task_id)
+        .filter(models.TaskApplication.tutor_id == tutor_id)
+        .all()
+    )
+
+    output = []
+    for task, status in results:
+        output.append({
+            "id": task.id,
+            "title": task.title,
+            "subject": task.subject,
+            "budget": task.budget,
+            "deadline": task.deadline,
+            "status": status
+        })
+    return output

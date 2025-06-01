@@ -1,7 +1,6 @@
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, validator
 from datetime import datetime
 from typing import Optional, List
-from pydantic import validator
 
 
 def to_camel(string: str) -> str:
@@ -177,6 +176,18 @@ class TaskApplicationOut(BaseModel):
 
 class TaskApplicationSimple(BaseModel):
     task_id: int
+    status: str
+
+    class Config:
+        orm_mode = True
+
+
+class TaskWithApplicationStatus(BaseModel):
+    id: int
+    title: str
+    subject: Optional[str]
+    budget: Optional[str]
+    deadline: Optional[str]
     status: str
 
     class Config:
