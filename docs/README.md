@@ -184,6 +184,22 @@ Planned: Allow students to rate and review tutors after task completion.
 
 ---
 
+## 🚧 Remaining Work Before Launch
+
+### 1. 🧩 Functional Completion (Core Interaction Loop)
+
+| Feature                               | Required | Status     | Description                                                                 |
+|---------------------------------------|----------|------------|-----------------------------------------------------------------------------|
+| 🧾 Student views & responds to applications | ✅ Yes  | ❌ Not Done | Students should be able to see tutors who applied to their tasks, and accept/reject |
+| 💬 Tutor can reply to messages        | ✅ Yes    | ❌ Not Done | Currently only students can message tutors; tutors need reply capability   |
+| 🔁 Task status transitions            | ✅ Yes    | ❌ Not Done | Tasks should move from `Open` → `In Progress` → `Completed`                |
+| 📅 Tutor availability scheduling      | ⛔ Optional | ❌ Not Done | Optional: Tutors define time slots for student booking                     |
+| ⭐ Reviews and ratings                | ⛔ Optional | ❌ Not Done | Optional: Students review tutors after task completion                     |
+
+
+---
+
+
 ## 📈 Conclusion
 
 TutorXpert currently enables:
