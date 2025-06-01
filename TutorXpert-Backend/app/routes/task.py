@@ -4,7 +4,13 @@ from typing import List, Optional
 from app import models, schemas
 from app.database import get_db
 from fastapi import status
+from pydantic import BaseModel
+from app.dependencies import get_current_user
 
+
+class TaskStatusUpdate(BaseModel):
+    status: str  # "In Progress" or "Completed"
+    tutor_id: int = None  # 仅在 status = "In Progress" 时需要
 
 router = APIRouter(tags=["tasks"])
 print("✅ task.py loaded")
@@ -92,3 +98,37 @@ def get_applied_tasks(tutor_id: int, db: Session = Depends(get_db)):
             "status": status
         })
     return output
+
+
+@router.patch("/tasks/{task_id}/status")
+def update_task_status(task_id: int, data: TaskStatusUpdate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    task = db.query(models.Task).filter(models.Task.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    if task.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to update this task")
+
+    if data.status == "In Progress":
+        if task.status != "Open":
+            raise HTTPException(status_code=400, detail="Only Open tasks can be moved to In Progress")
+        if data.tutor_id is None:
+            raise HTTPException(status_code=400, detail="tutor_id is required to start task")
+        task.status = "In Progress"
+        task.accepted_tutor_id = data.tutor_id
+
+    elif data.status == "Completed":
+        if task.status != "In Progress":
+            raise HTTPException(status_code=400, detail="Only In Progress tasks can be marked as Completed")
+        task.status = "Completed"
+
+    else:
+        raise HTTPException(status_code=400, detail="Invalid status")
+
+    db.commit()
+    db.refresh(task)
+    return {
+        "task_id": task.id,
+        "new_status": task.status,
+        "accepted_tutor_id": task.accepted_tutor_id,
+    }

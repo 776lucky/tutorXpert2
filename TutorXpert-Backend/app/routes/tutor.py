@@ -44,26 +44,6 @@ def search_tutors_by_map(
         print("🔥 Tutor search failed:", repr(e))
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-@router.post("/login")
-def login_tutor(user: schemas.UserLogin, db: Session = Depends(get_db)):
-    existing_user = db.query(models.User).filter(
-        models.User.email == user.email,
-        models.User.role == "tutor"  # 确保是 tutor 身份
-    ).first()
-    
-    if not existing_user or not pwd_context.verify(user.password, existing_user.hashed_password):
-        raise HTTPException(status_code=400, detail="Invalid credentials")
-
-    profile = db.query(models.Profile).filter(models.Profile.user_id == existing_user.id).first()
-
-    return {
-        "id": existing_user.id,
-        "email": existing_user.email,
-        "role": existing_user.role,
-        "first_name": profile.first_name if profile else "User"
-    }
-
-
 @router.get("/{tutor_id}", response_model=schemas.TutorOut, response_model_by_alias=True)
 def get_tutor_by_id(tutor_id: int, db: Session = Depends(get_db)):
     # 查询 Profile 和关联 User（确保是 tutor 身份）

@@ -13,8 +13,11 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     role = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
     profile = relationship("Profile", back_populates="user", uselist=False)
-    tasks = relationship("Task", back_populates="user")
+
+    # ✅ 指定外键，避免歧义
+    tasks = relationship("Task", back_populates="user", foreign_keys="[Task.user_id]")
 
 class Profile(Base):
     __tablename__ = "profile"
@@ -55,11 +58,12 @@ class Task(Base):
     lng = Column(Float)
     budget = Column(String)
     deadline = Column(String)
-    status = Column(String)
+    status = Column(String, default="Open")  # ✅ 建议加 default
     posted_by = Column(String)
     posted_date = Column(DateTime(timezone=True), server_default=func.now())  # ✅ 添加
     user_id = Column(Integer, ForeignKey("users.id"))  # ✅ 添加这一行
-    user = relationship("User", back_populates="tasks")  # ✅ 添加这一行
+    accepted_tutor_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # ✅ 新增
+    user = relationship("User", back_populates="tasks", foreign_keys=[user_id])
 
 class Message(Base):
     __tablename__ = "messages"

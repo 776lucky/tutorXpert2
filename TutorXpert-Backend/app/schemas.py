@@ -79,6 +79,7 @@ class TaskOut(BaseModel):
     posted_by: Optional[str] = None
     posted_date: Optional[datetime] = None
     status: Optional[str] = None
+    accepted_tutor_id: Optional[int] = None
 
     class Config:
         from_attributes = True
@@ -131,7 +132,8 @@ class TaskCreate(BaseModel):
     posted_by: Optional[str] = None
     posted_date: Optional[datetime] = None
     status: Optional[str] = "Open"
-    user_id: int  # ✅ 添加这一行
+    user_id: int
+    accepted_tutor_id: Optional[int] = None
 
 
 class MessageCreate(BaseModel):
