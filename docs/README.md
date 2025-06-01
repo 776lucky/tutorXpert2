@@ -64,13 +64,34 @@ Key concepts:
 
 ---
 
+### 🔒 Anti-Bypass Safeguards
+
+- ✅ Prevent students and tutors from bypassing the platform for direct transactions
+- ✅ Message system filters phone numbers, emails, and social handles 
+- ✅ Regex-based backend validation blocks contact info in messages
+- ✅ Frontend alerts users when restricted content is detected
+- ✅ Tested with multiple sample entries  
+
+---
+
+### ✉️ Messaging System (Beta)
+
+- ✅ Students can initiate messages to tutors from tutor cards
+- ✅ Chat UI includes message thread and message input
+- ✅ Messages are stored in database with sender/receiver roles
+- ✅ Tutor dashboard displays incoming conversations
+
+⛏️ Work: Message data model, FastAPI routing, front-end dialogue components and navigation jumps
+
 ## 🧭 Functional Flow Currently Supported
 
 **Student Flow:**  
-✅ Register → Edit Profile → Post Task → View Tutors  
+✅ Register → Edit Profile → Post Task → View Tutors → Contact Tutor via Message
 
 **Tutor Flow:**  
-✅ Register → Edit Profile → View Tasks → View Details  
+✅ Register → Edit Profile → View Tasks → View Details → Receive and Reply to Messages
+
+
 
 The platform currently supports the **complete flow from task posting to discovery**, for both students and tutors.
 
@@ -131,7 +152,7 @@ All modules were designed, developed, and tested independently by the same devel
 | Priority | Feature                     | Description                                      |
 |----------|-----------------------------|--------------------------------------------------|
 | 🔴 High  | Task application flow       | Tutors apply to tasks; students review/respond   |
-| 🔴 High  | Messaging or contact access | Unlock contact info or enable simple messaging   |
+| 🔴 High  | Messaging enhancement       | Support updates, notifications, and moderation   |
 | 🟠 Medium| Task status transitions     | Task status flows: Open → In Progress → Completed|
 | 🟠 Medium| Scheduling availability     | Tutors define available time slots; students book|
 | 🟢 Low   | Ratings & feedback          | Students leave reviews after task completion     |
