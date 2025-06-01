@@ -151,8 +151,6 @@ Planned: Allow students to rate and review tutors after task completion.
 
 ## Work Summary
 
-## Work Summary
-
 | Component                        | Status | Description                                                |
 |----------------------------------|--------|------------------------------------------------------------|
 | User registration & roles        | ✅     | Role-based login flow for students and tutors              |
