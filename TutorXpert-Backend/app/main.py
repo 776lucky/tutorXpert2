@@ -14,11 +14,15 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://tutorxpert-frontend.onrender.com",  # ✅ 渲染环境前端地址
+        "http://localhost:5173"                      # ✅ 本地调试地址
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 Base.metadata.create_all(bind=engine)
 
