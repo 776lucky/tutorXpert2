@@ -18,6 +18,7 @@ Key concepts:
 - ✅ Backend hosted on Render: `https://tutorxpert-backend-9qxd.onrender.com`
 - ✅ CORS configured via FastAPI middleware
 
+---
 
 ## 🧭 Functional Flow Currently Supported
 
