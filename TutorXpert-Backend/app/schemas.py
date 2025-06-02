@@ -149,7 +149,7 @@ class MessageOut(BaseModel):
     timestamp: datetime
 
     class Config:
-        "from_attributes": True
+        from_attributes: True
 
 class ConversationOut(BaseModel):
     id: int
@@ -159,7 +159,7 @@ class ConversationOut(BaseModel):
     unread: Optional[int] = 0
 
     class Config:
-        "from_attributes": True
+        from_attributes: True
 
 class TaskApplicationCreate(BaseModel):
     task_id: int
@@ -173,7 +173,7 @@ class TaskApplicationOut(BaseModel):
     status: str
 
     class Config:
-        "from_attributes": True
+        from_attributes: True
 
 
 class TaskApplicationSimple(BaseModel):
@@ -181,7 +181,7 @@ class TaskApplicationSimple(BaseModel):
     status: str
 
     class Config:
-        "from_attributes": True
+        from_attributes: True
 
 
 class TaskWithApplicationStatus(BaseModel):
@@ -193,4 +193,4 @@ class TaskWithApplicationStatus(BaseModel):
     status: str
 
     class Config:
-        "from_attributes": True
+        from_attributes: True
