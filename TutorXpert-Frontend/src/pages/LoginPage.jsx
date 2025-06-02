@@ -12,12 +12,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+
+
 
 const LoginPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/dashboard"; // 默认跳转到 dashboard
+
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -31,7 +36,7 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
+  
     if (!formData.email || !formData.password) {
       toast({
         title: "Error",
@@ -41,42 +46,43 @@ const LoginPage = () => {
       setIsSubmitting(false);
       return;
     }
-
+  
     try {
-      const response = await axios.post(`${baseUrl}/students/login`, {
-        email: formData.email,
-        password: formData.password
+      const params = new URLSearchParams();
+      params.append("username", formData.email);
+      params.append("password", formData.password);
+  
+      const response = await axios.post(`${baseUrl}/login`, params, {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       });
-
+  
       toast({
         title: "Welcome back!",
         description: "You have successfully logged in.",
         className: "bg-card border-primary/50 text-foreground"
       });
-
+  
+      const user = response.data.user;
+      localStorage.setItem("token", response.data.access_token);
       localStorage.setItem("user", JSON.stringify({
-      id: response.data.id,
-      email: response.data.email,
-      role: response.data.role?.toLowerCase() || "student",
-      isLoggedIn: true,
-      firstName: response.data.first_name || "User"
-    }));
-
-      localStorage.setItem("user_id", response.data.id.toString()); // ✅ 添加这一行
-
-
-
-      navigate("/dashboard");
+        id: user.id,
+        email: user.email,
+        role: user.role?.toLowerCase() || "student",
+        isLoggedIn: true
+      }));
+      localStorage.setItem("user_id", user.id.toString());
+  
+      navigate(from);
     } catch (error) {
-    toast({
-      title: "Authentication Error",
-      description: "The email or password is incorrect. Please try again.",
-      variant: "destructive",
-    });
-    setIsSubmitting(false);
-  }
-
+      toast({
+        title: "Authentication Error",
+        description: "The email or password is incorrect. Please try again.",
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+    }
   };
+  
 
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },

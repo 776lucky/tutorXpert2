@@ -84,7 +84,6 @@ The platform currently supports the **complete flow from task posting to discove
 
 ⛏️ Work: Filter logic, reusable components, page linking  
 
-
 ---
 
 ### 🔒 Anti-Bypass Safeguards

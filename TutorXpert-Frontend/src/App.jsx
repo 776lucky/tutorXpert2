@@ -27,6 +27,19 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import NotFoundPage from "@/pages/NotFoundPage";
 import ProfilePage from "@/pages/dashboard/ProfilePage";
 import ScrollToTop from "@/components/ScrollToTop";
+import axios from "axios";
+
+
+// ✅ 设置全局请求拦截器，自动附加 Authorization token
+axios.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, (error) => {
+  return Promise.reject(error);
+});
 
 const App = () => {
   return (

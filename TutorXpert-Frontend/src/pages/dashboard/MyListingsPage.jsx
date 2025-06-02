@@ -79,9 +79,9 @@ const MyListingsPage = () => {
                     <CardTitle className="text-xl text-primary">{listing.title}</CardTitle>
                     <Badge variant={listing.status === "pending" ? "secondary" : "success"}>{listing.status}</Badge>
                 </div>
-                <CardDescription className="flex flex-wrap gap-2 mt-1">
+                <div className="flex flex-wrap gap-2 mt-1">
                   <Badge variant="outline">{listing.subject}</Badge>
-                </CardDescription>
+                </div>
               </CardHeader>
               <CardContent className="grid sm:grid-cols-3 gap-4">
                 <div>
