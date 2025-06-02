@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,38 +15,20 @@ import {
   DropdownMenuGroup
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/context/AuthContext"; // ✅ 引入 AuthContext
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      if (parsedUser && parsedUser.isLoggedIn) {
-        setIsLoggedIn(true);
-        setUser(parsedUser);
-      } else {
-        setIsLoggedIn(false);
-        setUser(null);
-      }
-    } else {
-      setIsLoggedIn(false);
-      setUser(null);
-    }
-  }, [location.pathname]);
+  const { user, isAuthenticated, logout } = useAuth(); // ✅ 用 AuthContext 接管用户状态
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    setIsLoggedIn(false);
-    setUser(null);
+    logout();             // ✅ 正确调用 context 中的 logout()
     closeMenu();
     navigate("/");
   };
@@ -65,8 +47,6 @@ const Navbar = () => {
     { name: "Browse Tasks", path: "/projects" },
     { name: "Become a Tutor", path: "/signup?tutor=true" }
   ];
-
-  const mainNavItems = [];
 
   const searchTutorsDropdownItems = [
     { name: "Search Tutors", path: "/tutors", icon: <Search className="mr-2 h-4 w-4" /> },
@@ -88,20 +68,6 @@ const Navbar = () => {
     </Link>
   );
 
-  const MobileNavLink = ({ to, children, icon }) => (
-    <Link
-      to={to}
-      onClick={closeMenu}
-      className={`flex items-center pl-3 pr-4 py-3 border-l-4 text-base font-medium transition-colors duration-200 ${
-        location.pathname === to
-          ? "bg-primary/10 border-primary text-primary"
-          : "border-transparent text-muted-foreground hover:bg-accent hover:text-foreground"
-      }`}
-    >
-      {icon} {children}
-    </Link>
-  );
-
   return (
     <nav className="bg-card/80 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-primary/20">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -117,10 +83,6 @@ const Navbar = () => {
 
           <div className="hidden md:flex md:ml-6 md:space-x-6 items-center">
             {navItems.map((item) => (
-              <NavLink key={item.name} to={item.path}>{item.name}</NavLink>
-            ))}
-
-            {mainNavItems.map((item) => (
               <NavLink key={item.name} to={item.path}>{item.name}</NavLink>
             ))}
 
@@ -145,7 +107,7 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center space-x-3">
-            {isLoggedIn && user ? (
+            {isAuthenticated && user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative h-10 w-10 rounded-full">

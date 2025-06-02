@@ -12,19 +12,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import { useAuth } from "@/context/AuthContext"; // 路径根据实际调整
 
 
 const LoginPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || "/dashboard"; // 默认跳转到 dashboard
-
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { login } = useAuth();   // ✅ 顶部调用 useAuth
 
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -53,8 +51,22 @@ const LoginPage = () => {
       params.append("password", formData.password);
   
       const response = await axios.post(`${baseUrl}/login`, params, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        }
       });
+  
+      const user = response.data.user;
+      const token = response.data.access_token;
+  
+      if (!user || !token) throw new Error("Invalid response");
+  
+      login({
+        id: user.id,
+        email: user.email,
+        role: user.role?.toLowerCase() || "student",
+        isLoggedIn: true,
+      }, token);
   
       toast({
         title: "Welcome back!",
@@ -62,27 +74,18 @@ const LoginPage = () => {
         className: "bg-card border-primary/50 text-foreground"
       });
   
-      const user = response.data.user;
-      localStorage.setItem("token", response.data.access_token);
-      localStorage.setItem("user", JSON.stringify({
-        id: user.id,
-        email: user.email,
-        role: user.role?.toLowerCase() || "student",
-        isLoggedIn: true
-      }));
-      localStorage.setItem("user_id", user.id.toString());
+      navigate("/dashboard");  // ✅ 或 navigate(from) 如果你之前定义了跳转来源
   
-      navigate(from);
     } catch (error) {
       toast({
         title: "Authentication Error",
         description: "The email or password is incorrect. Please try again.",
         variant: "destructive",
       });
-      setIsSubmitting(false);
+    } finally {
+      setIsSubmitting(false);  // ✅ 始终停止 loading 状态
     }
   };
-  
 
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
