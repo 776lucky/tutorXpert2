@@ -13,6 +13,11 @@ import mockTutors from "@/data/mockTutors";
 import MapView from "@/components/MapView";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import {
+  Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+
 
 const parseSubjects = (subjects) => {
   if (Array.isArray(subjects)) return subjects;
@@ -45,8 +50,11 @@ const TutorsPage = () => {
   const [distanceFilter, setDistanceFilter] = useState("");
   const [userPosition, setUserPosition] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
   const cardRefs = useRef({});
+  const [selectedTutor, setSelectedTutor] = useState(null);
+  const [subject, setSubject] = useState("");
+  const [scheduledTime, setScheduledTime] = useState("");
+  const [message, setMessage] = useState("");
 
 
 
@@ -97,6 +105,35 @@ const TutorsPage = () => {
     }
   };
 
+
+  const handleAppointment = async () => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    if (!user?.id) {
+      toast({ title: "Error", description: "Please log in.", variant: "destructive" });
+      return;
+    }
+  
+    try {
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/appointments`, {
+        student_id: user.id,
+        tutor_id: selectedTutor.id,
+        subject,
+        scheduled_time: scheduledTime,
+        message
+      });
+  
+      toast({ title: "Appointment Requested", description: "The tutor will review your request." });
+      setSelectedTutor(null);  // 关闭弹窗
+      setSubject("");
+      setScheduledTime("");
+      setMessage("");
+    } catch (error) {
+      console.error("❌ Failed to send appointment", error);
+      toast({ title: "Failed", description: "Please try again.", variant: "destructive" });
+    }
+  };
+
+  
 
   const filterTutors = () => {
     let tempFiltered = [...tutors];
@@ -326,7 +363,7 @@ const TutorsPage = () => {
                       <Button variant="outline" className="flex-1" asChild>
                         <Link to={`/tutors/${tutor.id}`}>View Full Profile</Link>
                       </Button>
-                      <Button className="flex-1" onClick={() => handleContactTutor(tutor)}>
+                      <Button className="flex-1" onClick={() => setSelectedTutor(tutor)}>
                         Connect <Zap className="ml-2 h-4 w-4" />
                       </Button>
                     </CardFooter>
@@ -345,6 +382,29 @@ const TutorsPage = () => {
           </div>
         </div>
       </div>
+
+      {/* ✅ 预约弹窗插入在这里 */}
+      <Dialog open={!!selectedTutor} onOpenChange={() => setSelectedTutor(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Request Appointment with {selectedTutor?.name}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Label>Subject</Label>
+            <Input value={subject} onChange={(e) => setSubject(e.target.value)} />
+
+            <Label>Preferred Time</Label>
+            <Input type="datetime-local" value={scheduledTime} onChange={(e) => setScheduledTime(e.target.value)} />
+
+            <Label>Message</Label>
+            <Textarea value={message} onChange={(e) => setMessage(e.target.value)} />
+          </div>
+          <DialogFooter>
+            <Button onClick={handleAppointment}>Send Appointment</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 };

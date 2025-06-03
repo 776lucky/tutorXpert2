@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr, Field, validator
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, Literal
 
 
 def to_camel(string: str) -> str:
@@ -194,3 +194,42 @@ class TaskWithApplicationStatus(BaseModel):
 
     class Config:
         from_attributes: True
+
+
+# For tutor creating available slot
+class AvailableSlotCreate(BaseModel):
+    tutor_id: int
+    start_time: datetime
+    end_time: datetime
+
+# For response
+class AvailableSlotOut(BaseModel):
+    id: int
+    tutor_id: int
+    start_time: datetime
+    end_time: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class AppointmentCreate(BaseModel):
+    student_id: int
+    tutor_id: int
+    slot_id: int
+    message: Optional[str] = None
+
+class AppointmentOut(BaseModel):
+    id: int
+    student_id: int
+    tutor_id: int
+    slot_id: int
+    message: Optional[str]
+    status: str
+    created_at: datetime
+
+    class Config:
+        orm_mode = True
+
+class AppointmentStatusUpdate(BaseModel):
+    status: Literal["accepted", "rejected"]

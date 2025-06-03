@@ -18,6 +18,7 @@ class User(Base):
 
     # ✅ 指定外键，避免歧义
     tasks = relationship("Task", back_populates="user", foreign_keys="[Task.user_id]")
+    slots = relationship("AvailableSlot", back_populates="tutor")
 
 class Profile(Base):
     __tablename__ = "profile"
@@ -87,3 +88,29 @@ class TaskApplication(Base):
     applied_at = Column(DateTime(timezone=True), server_default=func.now())
     status = Column(String, default="pending")
 
+class AvailableSlot(Base):
+    __tablename__ = "available_slots"
+
+    id = Column(Integer, primary_key=True, index=True)
+    tutor_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+
+    start_time = Column(DateTime, nullable=False)
+    end_time = Column(DateTime, nullable=False)
+    is_booked = Column(Boolean, default=False)
+
+    tutor = relationship("User", back_populates="slots")
+
+class Appointment(Base):
+    __tablename__ = "appointments"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    tutor_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    slot_id = Column(Integer, ForeignKey("available_slots.id"), nullable=False)
+    message = Column(Text, nullable=True)
+    status = Column(String(20), default="pending")  # pending / accepted / rejected
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    slot = relationship("AvailableSlot")
+    student = relationship("User", foreign_keys=[student_id])
+    tutor = relationship("User", foreign_keys=[tutor_id])
