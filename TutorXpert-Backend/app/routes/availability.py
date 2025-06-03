@@ -1,41 +1,63 @@
 from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from typing import List
 from app.database import get_db
 from app import models, schemas
-from typing import List
-from pydantic import BaseModel
-
+from sqlalchemy.sql import exists
+from fastapi import HTTPException
+from app import database
 
 
 
 router = APIRouter(prefix="/availability", tags=["availability"])
 
-SLOT_DURATION_MINUTES = 15  # 可改为 30 代表半小时一段
+SLOT_DURATION_MINUTES = 15  # 每个 slot 持续 15 分钟
 
 @router.post("/", response_model=List[schemas.AvailableSlotOut])
-def create_slots(slot: schemas.AvailableSlotCreate, db: Session = Depends(get_db)):
-    if slot.start_time >= slot.end_time:
-        raise HTTPException(status_code=400, detail="Start time must be before end time")
+def create_slots(slots: List[schemas.AvailableSlotCreate], db: Session = Depends(get_db)):
+    created = []
 
-    slots = []
-    current = slot.start_time
-    while current + timedelta(minutes=SLOT_DURATION_MINUTES) <= slot.end_time:
-        new_slot = models.AvailableSlot(
-            tutor_id=slot.tutor_id,
-            start_time=current,
-            end_time=current + timedelta(minutes=SLOT_DURATION_MINUTES),
-            subject=slot.subject
-        )
-        db.add(new_slot)
-        slots.append(new_slot)
-        current += timedelta(minutes=SLOT_DURATION_MINUTES)
+    for slot in slots:
+        if slot.start_time >= slot.end_time:
+            raise HTTPException(status_code=400, detail="Start time must be before end time")
+
+        current = slot.start_time
+        while current + timedelta(minutes=SLOT_DURATION_MINUTES) <= slot.end_time:
+            new_slot = models.AvailableSlot(
+                tutor_id=slot.tutor_id,
+                start_time=current,
+                end_time=current + timedelta(minutes=SLOT_DURATION_MINUTES),
+                subject=slot.subject
+            )
+            db.add(new_slot)
+            created.append(new_slot)
+            current += timedelta(minutes=SLOT_DURATION_MINUTES)
 
     db.commit()
-    for s in slots:
+    for s in created:
         db.refresh(s)
-    return slots
 
-@router.get("/tutor/{tutor_id}", response_model=List[schemas.AvailableSlotOut])
-def get_slots(tutor_id: int, db: Session = Depends(get_db)):
-    return db.query(models.AvailableSlot).filter_by(tutor_id=tutor_id).all()
+    return created
+
+# 获取某个 tutor 的所有可用时间
+@router.get("/tutor/{tutor_id}", response_model=list[schemas.AvailableSlotOut])
+def get_tutor_slots(tutor_id: int, db: Session = Depends(get_db)):
+    slots = db.query(models.AvailableSlot).filter(models.AvailableSlot.tutor_id == tutor_id).all()
+    result = []
+
+    for slot in slots:
+        is_booked = db.query(
+            exists().where(models.Appointment.slot_id == slot.id)
+        ).scalar()
+
+        result.append(schemas.AvailableSlotOut(
+            id=slot.id,
+            tutor_id=slot.tutor_id,
+            start_time=slot.start_time,
+            end_time=slot.end_time,
+            subject=slot.subject,
+            is_booked=is_booked
+        ))
+
+    return result

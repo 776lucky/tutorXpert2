@@ -28,6 +28,8 @@ import NotFoundPage from "@/pages/NotFoundPage";
 import ProfilePage from "@/pages/dashboard/ProfilePage";
 import ScrollToTop from "@/components/ScrollToTop";
 import axios from "axios";
+import AvailabilityPage from "@/pages/dashboard/AvailabilityPage";
+
 
 
 // ✅ 设置全局请求拦截器，自动附加 Authorization token
@@ -73,6 +75,7 @@ const App = () => {
               <Route path="/dashboard/appointments" element={<MyAppointmentsPage />} />
               <Route path="/dashboard/profile" element={<ProfilePage />} />
               <Route path="/projects/new" element={<NewTaskPage />} />
+              <Route path="/dashboard/availability" element={<AvailabilityPage />} />
               {/* <Route path="/pay/:appointmentId" element={<PayPage />} /> */}
             </Route>
 
