@@ -35,3 +35,7 @@ def create_slots(slot: schemas.AvailableSlotCreate, db: Session = Depends(get_db
     for s in slots:
         db.refresh(s)
     return slots
+
+@router.get("/tutor/{tutor_id}", response_model=List[schemas.AvailableSlotOut])
+def get_slots(tutor_id: int, db: Session = Depends(get_db)):
+    return db.query(models.AvailableSlot).filter_by(tutor_id=tutor_id).all()

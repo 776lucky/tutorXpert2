@@ -12,11 +12,11 @@ import { useToast } from "@/components/ui/use-toast";
 import mockTutors from "@/data/mockTutors";
 import MapView from "@/components/MapView";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import {
-  Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogFooter
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
+import AppointmentDialog from "@/components/AppointmentDialog";
+
+
+
+
 
 
 const parseSubjects = (subjects) => {
@@ -41,7 +41,6 @@ const getDistanceKm = (lat1, lon1, lat2, lon2) => {
 
 const TutorsPage = () => {
   const { toast } = useToast();
-  const navigate = useNavigate();
   const [tutors, setTutors] = useState([]);
   const [filteredTutors, setFilteredTutors] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -50,13 +49,19 @@ const TutorsPage = () => {
   const [distanceFilter, setDistanceFilter] = useState("");
   const [userPosition, setUserPosition] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const cardRefs = useRef({});
+
+
   const [selectedTutor, setSelectedTutor] = useState(null);
-  const [subject, setSubject] = useState("");
-  const [scheduledTime, setScheduledTime] = useState("");
-  const [message, setMessage] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
 
+  const handleContactTutor = (tutor) => {
+    const fullName = tutor.name || `${tutor.firstName} ${tutor.lastName}`;
+    setSelectedTutor({ ...tutor, name: fullName });
+    setShowDialog(true);
+    console.log("Dialog open for tutor:", { ...tutor, name: fullName });
+  };
 
+  const cardRefs = useRef({});
 
   // ✅ 第一次加载触发地图范围请求
   useEffect(() => {
@@ -106,35 +111,6 @@ const TutorsPage = () => {
   };
 
 
-  const handleAppointment = async () => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    if (!user?.id) {
-      toast({ title: "Error", description: "Please log in.", variant: "destructive" });
-      return;
-    }
-  
-    try {
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/appointments`, {
-        student_id: user.id,
-        tutor_id: selectedTutor.id,
-        subject,
-        scheduled_time: scheduledTime,
-        message
-      });
-  
-      toast({ title: "Appointment Requested", description: "The tutor will review your request." });
-      setSelectedTutor(null);  // 关闭弹窗
-      setSubject("");
-      setScheduledTime("");
-      setMessage("");
-    } catch (error) {
-      console.error("❌ Failed to send appointment", error);
-      toast({ title: "Failed", description: "Please try again.", variant: "destructive" });
-    }
-  };
-
-  
-
   const filterTutors = () => {
     let tempFiltered = [...tutors];
     if (searchTerm) {
@@ -166,46 +142,6 @@ const TutorsPage = () => {
   const handleSubjectFilter = value => setSubjectFilter(value);
   const handleRatingFilter = value => setRatingFilter(value);
 
-  const handleContactTutor = async (tutor) => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    if (!user?.id) {
-      toast({
-        title: "Error",
-        description: "Please log in to initiate a conversation.",
-        variant: "destructive",
-      });
-      return;
-    }
-  
-    try {
-      // ✅ 尝试发送初始化消息（后端会自动去重）
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/messages`, {
-        sender_id: user.id,
-        receiver_id: tutor.id,
-        text: "Hi! I’m interested in your tutoring service.",
-      });
-  
-      // ✅ 成功后 toast
-      toast({
-        title: "Connection Initiated",
-        description: `Secure channel request sent to ${tutor.name}.`,
-        duration: 3000,
-        className: "bg-card border-primary/50 text-foreground",
-      });
-  
-      // ✅ 跳转
-      navigate(`/dashboard/messages?tutor_id=${tutor.id}`);
-    } catch (error) {
-      console.error("❌ Failed to send message", error);
-      toast({
-        title: "Failed to connect",
-        description: "An error occurred while contacting the tutor.",
-        variant: "destructive",
-      });
-    }
-  };
-  
-
   const handleMapClick = (id) => {
     const element = cardRefs.current[id];
     if (element) {
@@ -223,7 +159,17 @@ const TutorsPage = () => {
   const allSubjects = [...new Set(tutors.flatMap(t => t.subjects))].sort();
 
   return (
+
     <div className="min-h-screen bg-background text-foreground py-12">
+      {/* ✅ 添加弹出预约对话框组件 */}
+      
+      <AppointmentDialog
+        open={showDialog}
+        onClose={() => setShowDialog(false)}
+        tutor={selectedTutor}
+      />
+
+      {/* ✅ 原本页面结构从这里开始 */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div initial="hidden" animate="visible" variants={fadeIn} className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 animated-gradient-text">Discover Elite Tutors</h1>
@@ -363,7 +309,7 @@ const TutorsPage = () => {
                       <Button variant="outline" className="flex-1" asChild>
                         <Link to={`/tutors/${tutor.id}`}>View Full Profile</Link>
                       </Button>
-                      <Button className="flex-1" onClick={() => setSelectedTutor(tutor)}>
+                      <Button className="flex-1" onClick={() => handleContactTutor(tutor)}>
                         Connect <Zap className="ml-2 h-4 w-4" />
                       </Button>
                     </CardFooter>
@@ -382,29 +328,6 @@ const TutorsPage = () => {
           </div>
         </div>
       </div>
-
-      {/* ✅ 预约弹窗插入在这里 */}
-      <Dialog open={!!selectedTutor} onOpenChange={() => setSelectedTutor(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Request Appointment with {selectedTutor?.name}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <Label>Subject</Label>
-            <Input value={subject} onChange={(e) => setSubject(e.target.value)} />
-
-            <Label>Preferred Time</Label>
-            <Input type="datetime-local" value={scheduledTime} onChange={(e) => setScheduledTime(e.target.value)} />
-
-            <Label>Message</Label>
-            <Textarea value={message} onChange={(e) => setMessage(e.target.value)} />
-          </div>
-          <DialogFooter>
-            <Button onClick={handleAppointment}>Send Appointment</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
     </div>
   );
 };
