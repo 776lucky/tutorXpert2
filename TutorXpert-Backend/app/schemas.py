@@ -201,6 +201,7 @@ class AvailableSlotCreate(BaseModel):
     tutor_id: int
     start_time: datetime
     end_time: datetime
+    subject: str
 
 # For response
 class AvailableSlotOut(BaseModel):
@@ -208,6 +209,8 @@ class AvailableSlotOut(BaseModel):
     tutor_id: int
     start_time: datetime
     end_time: datetime
+    subject: str                     # ✅ 补上
+    is_booked: bool                  # ✅ 补上
 
     class Config:
         orm_mode = True

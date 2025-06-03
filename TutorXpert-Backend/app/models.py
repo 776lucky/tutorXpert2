@@ -19,6 +19,7 @@ class User(Base):
     # ✅ 指定外键，避免歧义
     tasks = relationship("Task", back_populates="user", foreign_keys="[Task.user_id]")
     slots = relationship("AvailableSlot", back_populates="tutor")
+    available_slots = relationship("AvailableSlot", back_populates="tutor")
 
 class Profile(Base):
     __tablename__ = "profile"
@@ -93,12 +94,13 @@ class AvailableSlot(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     tutor_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-
     start_time = Column(DateTime, nullable=False)
     end_time = Column(DateTime, nullable=False)
+    subject = Column(String(100), nullable=False)  # ✅ 新增字段
     is_booked = Column(Boolean, default=False)
 
-    tutor = relationship("User", back_populates="slots")
+    tutor = relationship("User", back_populates="available_slots")
+
 
 class Appointment(Base):
     __tablename__ = "appointments"
@@ -110,7 +112,7 @@ class Appointment(Base):
     message = Column(Text, nullable=True)
     status = Column(String(20), default="pending")  # pending / accepted / rejected
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-
     slot = relationship("AvailableSlot")
     student = relationship("User", foreign_keys=[student_id])
     tutor = relationship("User", foreign_keys=[tutor_id])
+
