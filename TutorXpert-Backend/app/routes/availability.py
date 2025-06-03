@@ -22,17 +22,14 @@ def create_slots(slots: List[schemas.AvailableSlotCreate], db: Session = Depends
         if slot.start_time >= slot.end_time:
             raise HTTPException(status_code=400, detail="Start time must be before end time")
 
-        current = slot.start_time
-        while current + timedelta(minutes=SLOT_DURATION_MINUTES) <= slot.end_time:
-            new_slot = models.AvailableSlot(
-                tutor_id=slot.tutor_id,
-                start_time=current,
-                end_time=current + timedelta(minutes=SLOT_DURATION_MINUTES),
-                subject=slot.subject
-            )
-            db.add(new_slot)
-            created.append(new_slot)
-            current += timedelta(minutes=SLOT_DURATION_MINUTES)
+        new_slot = models.AvailableSlot(
+            tutor_id=slot.tutor_id,
+            start_time=slot.start_time,
+            end_time=slot.end_time,
+            subject=slot.subject
+        )
+        db.add(new_slot)
+        created.append(new_slot)
 
     db.commit()
     for s in created:

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Input } from "@/components/ui/input";
@@ -8,10 +8,13 @@ import { useToast } from "@/components/ui/use-toast";
 import axios from "axios";
 import { format } from "date-fns";
 
+
 const AvailabilityPage = () => {
   const { toast } = useToast();
   const [loadingToastId, setLoadingToastId] = useState(null);
   const user = JSON.parse(localStorage.getItem("user"));
+  const [slots, setSlots] = useState([]);
+
   const [form, setForm] = useState({
     tutor_id: user?.id,
     subject: "",
@@ -65,8 +68,16 @@ const AvailabilityPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (!user?.id) return;
+    axios
+      .get(`${import.meta.env.VITE_API_BASE_URL}/availability/tutor/${user.id}`)
+      .then((res) => setSlots(res.data))
+      .catch((err) => console.error("Failed to load slots", err));
+  }, [user]);
+
   return (
-    <div className="min-h-screen bg-background text-foreground px-6 py-12 flex justify-center items-start">
+    <div className="min-h-screen bg-background text-foreground px-6 py-12 flex flex-col items-center space-y-10">
       <div className="w-full max-w-md space-y-6 bg-card p-6 rounded-xl shadow-lg border border-primary/20">
         <h2 className="text-2xl font-bold text-primary mb-2">Set Available Time Slot</h2>
 
@@ -112,6 +123,23 @@ const AvailabilityPage = () => {
         <Button onClick={handleSubmit} className="w-full mt-2">
           Submit
         </Button>
+      </div>
+
+      {/* 👇 显示已有 slots */}
+      <div className="w-full max-w-md space-y-4">
+        <h3 className="text-xl font-semibold">Your Available Time Slots</h3>
+        {slots.length === 0 ? (
+          <p className="text-muted">No slots yet.</p>
+        ) : (
+          slots.map((slot) => (
+            <div key={slot.id} className="border p-4 rounded shadow-sm">
+              <p><strong>Subject:</strong> {slot.subject}</p>
+              <p><strong>Start:</strong> {new Date(slot.start_time).toLocaleString()}</p>
+              <p><strong>End:</strong> {new Date(slot.end_time).toLocaleString()}</p>
+              <p><strong>Status:</strong> {slot.is_booked ? "Booked" : "Available"}</p>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

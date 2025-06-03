@@ -18,7 +18,6 @@ class User(Base):
 
     # ✅ 指定外键，避免歧义
     tasks = relationship("Task", back_populates="user", foreign_keys="[Task.user_id]")
-    slots = relationship("AvailableSlot", back_populates="tutor")
     available_slots = relationship("AvailableSlot", back_populates="tutor")
 
 class Profile(Base):
