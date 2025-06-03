@@ -52,6 +52,9 @@ class UserCreate(ProfileBase):
     email: EmailStr
     password: str
     role: str = "student"
+    lat: Optional[float]   # ✅ 新增
+    lng: Optional[float]   # ✅ 新增
+
 
 class UserOut(BaseModel):
     id: int
