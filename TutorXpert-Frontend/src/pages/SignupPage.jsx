@@ -1,9 +1,9 @@
-
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import SignupForm from "@/components/auth/SignupForm";
 import { Zap, Users, Brain } from "lucide-react";
+import AddressAutoComplete from "@/components/AddressAutoComplete";
 
 const SignupPage = () => {
   const fadeIn = {
