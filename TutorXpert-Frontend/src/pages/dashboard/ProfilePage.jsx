@@ -5,6 +5,10 @@ import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input"; // ✅ 加在顶部
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import AddressAutoComplete from "@/components/AddressAutoComplete";
+
+
+
 
 const ProfilePage = () => {
   const { toast } = useToast();
@@ -49,7 +53,11 @@ const ProfilePage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "hourly_rate" ? Number(value) : value,
+    }));
   };
 
   const handleSave = async () => {
@@ -96,46 +104,87 @@ const ProfilePage = () => {
 
   const renderTutorProfile = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  
       <div>
         <label className="block mb-1 font-medium">First Name</label>
         <Input name="first_name" value={formData.first_name || ""} onChange={handleChange} className="text-white" />
       </div>
+  
       <div>
         <label className="block mb-1 font-medium">Last Name</label>
         <Input name="last_name" value={formData.last_name || ""} onChange={handleChange} className="text-white" />
       </div>
+  
       <div>
         <label className="block mb-1 font-medium">Phone Number</label>
         <Input name="phone_number" value={formData.phone_number || ""} onChange={handleChange} className="text-white" />
       </div>
+  
       <div>
         <label className="block mb-1 font-medium">Education Level</label>
-        <Input name="education_level" value={formData.education_level || ""} onChange={handleChange} className="text-white" />
+        <select
+          name="education_level"
+          value={formData.education_level || ""}
+          onChange={handleChange}
+          className="w-full bg-background text-white border border-input rounded-md px-3 py-2"
+        >
+          <option value="">Select</option>
+          <option value="High School">High School</option>
+          <option value="Bachelor">Bachelor</option>
+          <option value="Master">Master</option>
+          <option value="PhD">PhD</option>
+        </select>
       </div>
+  
       <div>
         <label className="block mb-1 font-medium">Major</label>
         <Input name="major" value={formData.major || ""} onChange={handleChange} className="text-white" />
       </div>
+  
       <div>
-        <label className="block mb-1 font-medium">Subjects</label>
+        <label className="block mb-1 font-medium">Subjects (comma separated)</label>
         <Input name="subjects" value={formData.subjects || ""} onChange={handleChange} className="text-white" />
       </div>
+  
       <div>
-        <label className="block mb-1 font-medium">Availability</label>
-        <Input name="availability" value={formData.availability || ""} onChange={handleChange} className="text-white" />
+        <label className="block mb-1 font-medium">Hourly Rate ($/hr)</label>
+        <Input
+          type="number"
+          name="hourly_rate"
+          value={formData.hourly_rate || ""}
+          onChange={handleChange}
+          className="text-white"
+        />
       </div>
-      <div>
+  
+      <div className="md:col-span-2">
         <label className="block mb-1 font-medium">Address</label>
-        <Input name="address" value={formData.address || ""} onChange={handleChange} className="text-white" />
+        <AddressAutoComplete form={formData} setForm={setFormData} />
       </div>
+  
       <div>
         <label className="block mb-1 font-medium">Working With Children Check</label>
-        <Input name="working_with_children_check" value={formData.working_with_children_check || ""} onChange={handleChange} className="text-white" />
+        <select
+          name="working_with_children_check"
+          value={formData.working_with_children_check ? "yes" : "no"}
+          onChange={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              working_with_children_check: e.target.value === "yes",
+            }))
+          }
+          className="w-full bg-background text-white border border-input rounded-md px-3 py-2"
+        >
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
       </div>
+  
       <div>
         <label className="block mb-1 font-medium">Certifications</label>
         <Input name="certifications" value={formData.certifications || ""} onChange={handleChange} className="text-white" />
       </div>
+  
       <div>
         <label className="block mb-1 font-medium">Has Experience</label>
         <select
@@ -150,6 +199,7 @@ const ProfilePage = () => {
           <option value="no">No</option>
         </select>
       </div>
+  
       {formData.has_experience && (
         <div className="md:col-span-2">
           <label className="block mb-1 font-medium">Experience Details</label>
@@ -163,6 +213,13 @@ const ProfilePage = () => {
       )}
     </div>
   );
+  
+
+
+
+
+
+
   
 
   return (

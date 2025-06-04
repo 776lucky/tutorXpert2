@@ -13,7 +13,7 @@ import mockTutors from "@/data/mockTutors";
 import MapView from "@/components/MapView";
 import axios from "axios";
 import AppointmentDialog from "@/components/AppointmentDialog";
-
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -49,7 +49,7 @@ const TutorsPage = () => {
   const [distanceFilter, setDistanceFilter] = useState("");
   const [userPosition, setUserPosition] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  const navigate = useNavigate();
 
   const [selectedTutor, setSelectedTutor] = useState(null);
   const [showDialog, setShowDialog] = useState(false);

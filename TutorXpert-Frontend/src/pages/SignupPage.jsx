@@ -28,7 +28,7 @@ const SignupPage = () => {
             <Zap className="h-12 w-12 text-primary mx-auto mb-4 tech-glow" />
             <h1 className="text-3xl md:text-4xl font-bold animated-gradient-text">Join GlowUpTutors</h1>
             <p className="text-muted-foreground mt-2">
-              Unlock your potential. Connect, learn, and grow with us.
+              Unlock your potoptimizeential. Connect, learn, and grow with us.
             </p>
           </div>
           

@@ -40,7 +40,7 @@ class Profile(Base):
     accepts_short_notice = Column(Boolean, nullable=True)
     lat = Column(Float, nullable=False, default=0.0)
     lng = Column(Float, nullable=False, default=0.0)
-    hourly_rate = Column(Float, nullable=True)
+    hourly_rate = Column(Integer, nullable=True)
     rating = Column(Float, nullable=True)
     title = Column(String(100), nullable=True)
     bio = Column(Text, nullable=True)

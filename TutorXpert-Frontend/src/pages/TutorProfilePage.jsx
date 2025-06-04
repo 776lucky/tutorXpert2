@@ -1,169 +1,65 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { useParams, Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardFooter
-} from "@/components/ui/card";
-import {
-  ArrowLeft,
-  Zap,
-  Star,
-  Clock,
-  BookOpen,
-  Award,
-  Calendar as CalendarIcon
-} from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
-
-import { useEffect, useState } from "react";
-import Calendar from 'react-calendar';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import axios from "axios";
-import 'react-calendar/dist/Calendar.css';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const TutorProfilePage = () => {
   const { id } = useParams();
-  const { toast } = useToast();
-  const [tutor, setTutor] = useState(null);
-
-  const fadeIn = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-  };
+  const [profile, setProfile] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchTutor = async () => {
-      try {
-        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/tutors/${id}`);
-        const data = res.data;
-  
-        // ✅ 修复 subjects 类型为数组
-        if (typeof data.subjects === "string") {
-          data.subjects = data.subjects.split(",").map(s => s.trim());
-        }
-  
-        setTutor(data);
-      } catch (err) {
-        console.error("❌ Failed to fetch tutor:", err);
-      }
-    };
-    fetchTutor();
+    if (!id) return;
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/profiles/${id}`)
+      .then(res => setProfile(res.data))
+      .catch(() => setError("Failed to load profile"));
   }, [id]);
-  
-  
 
-
-
-  if (!tutor) {
-    return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-        <p>Loading tutor details...</p>
-      </div>
-    );
+  if (error) {
+    return <div className="p-6 text-red-500">{error}</div>;
   }
-  
+
+  if (!profile) {
+    return <div className="p-6 text-muted-foreground">Loading...</div>;
+  }
+
+  const display = (val) => val || "—";
 
   return (
-    <motion.div
-      className="min-h-screen p-8 text-foreground bg-background"
-      variants={fadeIn}
-      initial="hidden"
-      animate="visible"
-    >
-      <Button variant="outline" asChild className="mb-6">
-        <Link to="/tutors"><ArrowLeft className="mr-2 h-4 w-4" /> Back to Tutors</Link>
-      </Button>
-
-      <Card className="max-w-3xl mx-auto shadow-2xl p-6 rounded-xl bg-card/80">
-        <CardHeader className="flex flex-col items-center text-center">
-          <img
-            src={tutor.image || "https://source.unsplash.com/100x100/?face,portrait"}
-            alt={tutor.name}
-            className="w-24 h-24 rounded-full object-cover mb-4 border-2 border-primary shadow-md"
-          />
-          <CardTitle className="text-3xl">{tutor.name}</CardTitle>
-          <CardDescription className="text-muted-foreground">{tutor.title}</CardDescription>
+    <div className="p-6 max-w-4xl mx-auto text-foreground bg-background min-h-screen">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-2xl text-primary">{profile.first_name} {profile.last_name}</CardTitle>
         </CardHeader>
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div><strong>Phone:</strong> {display(profile.phone_number)}</div>
+          <div><strong>Education:</strong> {display(profile.education_level)}</div>
+          <div><strong>Major:</strong> {display(profile.major)}</div>
+          <div><strong>Hourly Rate:</strong> {profile.hourly_rate ? `$${profile.hourly_rate}/hour` : "—"}</div>
+          <div><strong>Working With Children Check:</strong> {profile.working_with_children_check ? "Yes" : "No"}</div>
+          <div><strong>Has Experience:</strong> {profile.has_experience ? "Yes" : "No"}</div>
+          <div><strong>Address:</strong> {display(profile.address)}</div>
+          <div><strong>Certifications:</strong> {display(profile.certifications)}</div>
 
-        <CardContent className="space-y-6 mt-4">
-          <div className="text-base leading-relaxed text-muted-foreground">{tutor.bio}</div>
-
-          <div className="flex flex-wrap gap-2">
-            {tutor.subjects?.map((subj, idx) => (
-              <Badge key={idx} className="text-sm">{subj}</Badge>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center"><Star className="h-4 w-4 mr-2 text-yellow-400" /> Rating: {tutor.rating}</div>
-            <div className="flex items-center">
-              <Clock className="h-4 w-4 mr-2 text-blue-400" />
-              Rate: ${tutor.hourlyRate ?? tutor.hourly_rate}/hr
-            </div>
-            <div className="flex items-center"><Award className="h-4 w-4 mr-2 text-green-400" /> {tutor.experience}</div>
-            <div className="flex items-center"><BookOpen className="h-4 w-4 mr-2 text-violet-400" /> {tutor.education}</div>
-          </div>
-
-          {tutor.availableTime && (
-            <div className="mt-6">
-              <h3 className="text-md font-semibold text-primary mb-2">Availability Calendar</h3>
-              <div className="rounded-lg overflow-hidden border border-border bg-muted/30 p-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-muted-foreground mb-4">
-                  {tutor.availableTime?.map((slot, idx) => (
-                    <div key={idx} className="flex items-center">
-                      <CalendarIcon className="h-4 w-4 mr-2 text-cyan-400" />
-                      <span>{slot.day}: {slot.start} - {slot.end}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+          {profile.subjects && (
+            <div className="md:col-span-2">
+              <strong>Subjects:</strong>{" "}
+              {profile.subjects.split(",").map((s, idx) => (
+                <Badge key={idx} className="mr-2 mt-1 inline-block">{s.trim()}</Badge>
+              ))}
             </div>
           )}
 
-          {tutor.certifications && (
-            <div>
-              <h3 className="text-md font-semibold text-primary mb-1">Certifications</h3>
-              <ul className="list-disc pl-6 text-muted-foreground text-sm">
-                {tutor.certifications?.map((cert, idx) => (
-                  <li key={idx}>{cert}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {tutor.reviews && tutor.reviews.length > 0 && (
-            <div>
-              <h3 className="text-md font-semibold text-primary mb-1">Student Reviews</h3>
-              <div className="space-y-2">
-                {tutor.reviews?.map((rev, idx) => (
-                  <div key={idx} className="p-3 bg-muted/30 rounded-lg shadow-inner">
-                    <p className="text-sm"><strong>{rev.user}</strong>: {rev.comment}</p>
-                    <p className="text-xs text-yellow-500">Rating: {rev.rating}</p>
-                  </div>
-                ))}
-              </div>
+          {profile.has_experience && (
+            <div className="md:col-span-2">
+              <strong>Experience:</strong>
+              <p className="mt-1">{display(profile.experience_details)}</p>
             </div>
           )}
         </CardContent>
-
-        <CardFooter className="mt-6 flex justify-center">
-          <Button onClick={() =>
-            toast({
-              title: "Booking Started",
-              description: `You've started booking ${tutor.name}.`,
-            })
-          }>
-            Book a Session <Zap className="ml-2 h-4 w-4" />
-          </Button>
-        </CardFooter>
       </Card>
-    </motion.div>
+    </div>
   );
 };
 

@@ -21,6 +21,7 @@ class ProfileBase(BaseModel):
     experience_details: Optional[str] = None
     availability: Optional[str] = None
     accepts_short_notice: Optional[bool] = None
+    hourly_rate: Optional[int] = None     # ✅ 添加这一行
 
 # ✅ 创建 ProfileUpdate：全部字段都设置为可选
 class ProfileUpdate(BaseModel):
@@ -37,6 +38,7 @@ class ProfileUpdate(BaseModel):
     experience_details: Optional[str] = None
     availability: Optional[str] = None
     accepts_short_notice: Optional[bool] = None
+    hourly_rate: Optional[int] = None
 
 class ProfileCreate(ProfileBase):
     pass
@@ -44,6 +46,7 @@ class ProfileCreate(ProfileBase):
 class ProfileOut(ProfileCreate):
     id: int
     user_id: int
+    hourly_rate: Optional[int] = None
 
     class Config:
         from_attributes = True
