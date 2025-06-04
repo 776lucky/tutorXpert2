@@ -43,13 +43,45 @@ class ProfileUpdate(BaseModel):
 class ProfileCreate(ProfileBase):
     pass
 
-class ProfileOut(ProfileCreate):
-    id: int
-    user_id: int
+class ProfileOut(BaseModel):
+    first_name: Optional[str]
+    last_name: Optional[str]
+    avatar_url: Optional[str] = None
+    phone_number: Optional[str] = None
+    address: Optional[str] = None
+    education_level: Optional[str] = None
+    major: Optional[str] = None
+    certifications: Optional[str] = None
+    working_with_children_check: Optional[str] = None
+    has_experience: Optional[bool] = None
+    experience_details: Optional[str] = None
+    availability: Optional[str] = None
+    accepts_short_notice: Optional[bool] = None
     hourly_rate: Optional[int] = None
+    lat: Optional[float] = None
+    lng: Optional[float] = None
+    subjects: List[str] = []   # ✅ 转换为 list
 
     class Config:
         from_attributes = True
+
+    @validator("subjects", pre=True)
+    def parse_subjects(cls, v):
+        if isinstance(v, str):
+            return [s.strip() for s in v.split(",")]
+        return v or []
+
+
+class UserWithProfileOut(BaseModel):
+    id: int
+    email: EmailStr
+    role: str
+    profile: Optional[ProfileOut]
+
+    class Config:
+        from_attributes = True
+
+
 
 class UserCreate(ProfileBase):
     email: EmailStr

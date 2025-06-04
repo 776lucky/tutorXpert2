@@ -49,41 +49,52 @@ const LoginPage = () => {
       const params = new URLSearchParams();
       params.append("username", formData.email);
       params.append("password", formData.password);
-  
+    
       const response = await axios.post(`${baseUrl}/login`, params, {
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
-        }
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
       });
-  
+    
       const user = response.data.user;
       const token = response.data.access_token;
-  
+    
       if (!user || !token) throw new Error("Invalid response");
-  
-      login({
-        id: user.id,
-        email: user.email,
-        role: user.role?.toLowerCase() || "student",
-        isLoggedIn: true,
-      }, token);
-  
+    
+      const profile = user.profile || {};
+    
+      login(
+        {
+          id: user.id,
+          email: user.email,
+          role: user.role?.toLowerCase() || "student",
+          userType: user.role?.toLowerCase() || "student",
+          fullName: `${profile.first_name || ""} ${profile.last_name || ""}`.trim(),
+          avatarUrl: profile.avatar_url || null,
+          subjects: profile.subjects || [],
+          hourlyRate: profile.hourly_rate || null,
+          lat: profile.lat,
+          lng: profile.lng,
+          isLoggedIn: true,
+          token: token,
+        },
+        token
+      );
+    
       toast({
         title: "Welcome back!",
         description: "You have successfully logged in.",
-        className: "bg-card border-primary/50 text-foreground"
+        className: "bg-card border-primary/50 text-foreground",
       });
-  
-      navigate("/dashboard");  // ✅ 或 navigate(from) 如果你之前定义了跳转来源
-  
-    } catch (error) {
+    
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Login error:", err);
       toast({
-        title: "Authentication Error",
-        description: "The email or password is incorrect. Please try again.",
+        title: "Login failed",
+        description: "Please check your email and password.",
         variant: "destructive",
       });
-    } finally {
-      setIsSubmitting(false);  // ✅ 始终停止 loading 状态
     }
   };
 
