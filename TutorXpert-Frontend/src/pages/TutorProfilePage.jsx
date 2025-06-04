@@ -45,7 +45,12 @@ const TutorProfilePage = () => {
           {profile.subjects && (
             <div className="md:col-span-2">
               <strong>Subjects:</strong>{" "}
-              {profile.subjects.split(",").map((s, idx) => (
+              {(Array.isArray(profile.subjects)
+                ? profile.subjects
+                : typeof profile.subjects === "string"
+                  ? profile.subjects.split(",")
+                  : []
+              ).map((s, idx) => (
                 <Badge key={idx} className="mr-2 mt-1 inline-block">{s.trim()}</Badge>
               ))}
             </div>
