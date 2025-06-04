@@ -29,6 +29,8 @@ import ProfilePage from "@/pages/dashboard/ProfilePage";
 import ScrollToTop from "@/components/ScrollToTop";
 import axios from "axios";
 import AvailabilityPage from "@/pages/dashboard/AvailabilityPage";
+import TestDialog from "@/pages/TestDialog"; // 确保路径正确
+import NewAppointmentPage from "@/pages/NewAppointmentPage";
 
 
 
@@ -63,6 +65,7 @@ const App = () => {
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/test-dialog" element={<TestDialog />} />
 
             {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>
@@ -76,6 +79,7 @@ const App = () => {
               <Route path="/dashboard/profile" element={<ProfilePage />} />
               <Route path="/projects/new" element={<NewTaskPage />} />
               <Route path="/dashboard/availability" element={<AvailabilityPage />} />
+              <Route path="/appointments/new/:tutor_id" element={<NewAppointmentPage />} />
               {/* <Route path="/pay/:appointmentId" element={<PayPage />} /> */}
             </Route>
 

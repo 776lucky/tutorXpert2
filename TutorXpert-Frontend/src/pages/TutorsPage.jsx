@@ -58,7 +58,6 @@ const TutorsPage = () => {
     const fullName = tutor.name || `${tutor.firstName} ${tutor.lastName}`;
     setSelectedTutor({ ...tutor, name: fullName });
     setShowDialog(true);
-    console.log("Dialog open for tutor:", { ...tutor, name: fullName });
   };
 
   const cardRefs = useRef({});
@@ -74,7 +73,13 @@ const TutorsPage = () => {
     });
   }, []);
 
-  
+  // 添加 useEffect 来监听状态变化：
+  useEffect(() => {
+    console.log("📊 showDialog state changed:", showDialog);
+    console.log("👤 selectedTutor:", selectedTutor);
+  }, [showDialog, selectedTutor]);
+
+
   // ✅ 获取用户地理位置（可选）
   useEffect(() => {
     if (navigator.geolocation) {
@@ -141,7 +146,6 @@ const TutorsPage = () => {
   const handleSearch = e => setSearchTerm(e.target.value);
   const handleSubjectFilter = value => setSubjectFilter(value);
   const handleRatingFilter = value => setRatingFilter(value);
-
   const handleMapClick = (id) => {
     const element = cardRefs.current[id];
     if (element) {
@@ -158,16 +162,21 @@ const TutorsPage = () => {
 
   const allSubjects = [...new Set(tutors.flatMap(t => t.subjects))].sort();
 
-  return (
 
+
+  // ✅ 正确放置 Dialog 组件，确保页面内只有一个
+  const renderAppointmentDialog = (
+    <AppointmentDialog
+      open={showDialog}
+      onClose={() => setShowDialog(false)}
+      tutor={selectedTutor}
+    />
+  );
+
+  return (
     <div className="min-h-screen bg-background text-foreground py-12">
       {/* ✅ 添加弹出预约对话框组件 */}
-      
-      <AppointmentDialog
-        open={showDialog}
-        onClose={() => setShowDialog(false)}
-        tutor={selectedTutor}
-      />
+      {renderAppointmentDialog}
 
       {/* ✅ 原本页面结构从这里开始 */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -309,9 +318,11 @@ const TutorsPage = () => {
                       <Button variant="outline" className="flex-1" asChild>
                         <Link to={`/tutors/${tutor.id}`}>View Full Profile</Link>
                       </Button>
-                      <Button className="flex-1" onClick={() => handleContactTutor(tutor)}>
+
+                      <Button className="flex-1" onClick={() => navigate(`/appointments/new/${tutor.id}`)}>
                         Connect <Zap className="ml-2 h-4 w-4" />
                       </Button>
+
                     </CardFooter>
                   </Card>
                 </motion.div>

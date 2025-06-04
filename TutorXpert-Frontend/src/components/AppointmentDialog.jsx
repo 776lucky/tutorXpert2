@@ -32,9 +32,10 @@ const AppointmentDialog = ({ open, onClose, tutor }) => {
       axios
         .get(`${import.meta.env.VITE_API_BASE_URL}/availability/tutor/${tutor.id}`)
         .then((res) => {
+          const availableSlots = res.data.filter(slot => !slot.is_booked);
           console.log("API Response for tutor", tutor.id, ":", res.data);
-          setSlots(res.data);
-          if (res.data.length === 0) {
+          setSlots(availableSlots);
+          if (availableSlots.length === 0) {
             toast({
               title: "No Availability",
               description: "This tutor has no available time slots. Please try another tutor.",
