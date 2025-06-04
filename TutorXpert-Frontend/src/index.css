@@ -123,3 +123,9 @@
 ::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--accent));
 }
+
+/* 灰色处理已预约 slot */
+.select-item[disabled] {
+  background-color: #f3f4f6; /* gray-100 */
+  color: #9ca3af;            /* gray-400 */
+}

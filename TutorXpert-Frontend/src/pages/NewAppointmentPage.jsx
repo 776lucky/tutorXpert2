@@ -29,8 +29,7 @@ const NewAppointmentPage = () => {
       axios
         .get(`${import.meta.env.VITE_API_BASE_URL}/availability/tutor/${tutor_id}`)
         .then((res) => {
-          const available = res.data.filter((s) => !s.is_booked);
-          setSlots(available);
+          setSlots(res.data);  // ✅ 不做过滤，后续再判断 is_booked
         })
         .catch((err) => {
           console.error("❌ Failed to load tutor slots:", err);
@@ -42,6 +41,7 @@ const NewAppointmentPage = () => {
         });
     }
   }, [tutor_id]);
+  
 
   const handleSubmit = async () => {
     if (!slotId) {
@@ -88,11 +88,17 @@ const NewAppointmentPage = () => {
               <SelectValue placeholder="Choose a time slot" />
             </SelectTrigger>
             <SelectContent>
-              {slots.map((s) => (
-                <SelectItem key={s.id} value={s.id.toString()}>
-                  {s.subject} – {s.start_time} → {s.end_time}
+            {slots.map((s) => (
+                <SelectItem
+                key={s.id}
+                value={s.id.toString()}
+                disabled={s.is_booked} // 禁用已预约的 slot
+                className={s.is_booked ? "opacity-50 pointer-events-none" : ""}
+                >
+                {s.subject} – {s.start_time} → {s.end_time}
+                {s.is_booked && " (Booked)"}
                 </SelectItem>
-              ))}
+            ))}
             </SelectContent>
           </Select>
         </div>
