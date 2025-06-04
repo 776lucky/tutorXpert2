@@ -5,7 +5,7 @@ from typing import List
 from app.database import get_db
 from app import models, schemas
 from sqlalchemy.sql import exists
-from fastapi import HTTPException
+from fastapi import HTTPException, status
 from app import database
 
 
@@ -58,3 +58,20 @@ def get_tutor_slots(tutor_id: int, db: Session = Depends(get_db)):
         ))
 
     return result
+
+
+@router.delete("/{slot_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_slot(slot_id: int, db: Session = Depends(get_db)):
+    slot = db.query(models.AvailableSlot).filter(models.AvailableSlot.id == slot_id).first()
+    if not slot:
+        raise HTTPException(status_code=404, detail="Slot not found")
+
+    # 可选：阻止删除已被预约的 slot（建议加上，防止误删）
+    is_booked = db.query(
+        exists().where(models.Appointment.slot_id == slot.id)
+    ).scalar()
+    if is_booked:
+        raise HTTPException(status_code=400, detail="Cannot delete a booked slot")
+
+    db.delete(slot)
+    db.commit()

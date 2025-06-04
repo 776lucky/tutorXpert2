@@ -68,13 +68,32 @@ const AvailabilityPage = () => {
     }
   };
 
+  const handleDelete = async (slotId) => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/availability/${slotId}`);
+      toast({
+        title: "Deleted",
+        description: "Slot removed successfully",
+      });
+      setSlots((prev) => prev.filter((slot) => slot.id !== slotId));
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: err.response?.data?.detail || "Failed to delete slot.",
+        variant: "destructive",
+      });
+    }
+  };
+  
+
   useEffect(() => {
-    if (!user?.id) return;
+    const currentUser = JSON.parse(localStorage.getItem("user"));
+    if (!currentUser?.id) return;
     axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/availability/tutor/${user.id}`)
+      .get(`${import.meta.env.VITE_API_BASE_URL}/availability/tutor/${currentUser.id}`)
       .then((res) => setSlots(res.data))
       .catch((err) => console.error("Failed to load slots", err));
-  }, [user]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground px-6 py-12 flex flex-col items-center space-y-10">
@@ -132,11 +151,19 @@ const AvailabilityPage = () => {
           <p className="text-muted">No slots yet.</p>
         ) : (
           slots.map((slot) => (
-            <div key={slot.id} className="border p-4 rounded shadow-sm">
+            <div key={slot.id} className="border p-4 rounded shadow-sm space-y-1">
               <p><strong>Subject:</strong> {slot.subject}</p>
               <p><strong>Start:</strong> {new Date(slot.start_time).toLocaleString()}</p>
               <p><strong>End:</strong> {new Date(slot.end_time).toLocaleString()}</p>
               <p><strong>Status:</strong> {slot.is_booked ? "Booked" : "Available"}</p>
+              <Button
+                variant="destructive"
+                size="sm"
+                className="mt-2"
+                onClick={() => handleDelete(slot.id)}
+              >
+                Delete
+              </Button>
             </div>
           ))
         )}
