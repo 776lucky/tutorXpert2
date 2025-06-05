@@ -32,7 +32,7 @@ class ProfileUpdate(BaseModel):
     education_level: Optional[str] = None
     major: Optional[str] = None
     certifications: Optional[str] = None
-    working_with_children_check: Optional[str] = None
+    working_with_children_check: Optional[bool] = None
     subjects: Optional[str] = None
     has_experience: Optional[bool] = None
     experience_details: Optional[str] = None

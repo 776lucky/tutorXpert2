@@ -61,9 +61,16 @@ const ProfilePage = () => {
   };
 
   const handleSave = async () => {
+    const payload = {
+      ...formData,
+      subjects: Array.isArray(formData.subjects)
+        ? formData.subjects.join(",")
+        : formData.subjects ?? "",  // 确保是字符串
+    };
+  
     try {
-      await axios.put(`${import.meta.env.VITE_API_BASE_URL}/profiles/${storedUser.id}`, formData);
-      setProfile(formData);
+      await axios.put(`${import.meta.env.VITE_API_BASE_URL}/profiles/${storedUser.id}`, payload);
+      setProfile(payload);
       setIsEditing(false);
       toast({
         title: "Edited successfully!",
@@ -72,6 +79,11 @@ const ProfilePage = () => {
       });
     } catch (err) {
       console.error("Failed to update profile", err);
+      toast({
+        title: "Update failed",
+        description: "Please check your form and try again.",
+        variant: "destructive",
+      });
     }
   };
   
