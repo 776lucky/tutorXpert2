@@ -25,6 +25,7 @@ const DashboardPage = () => {
     { name: "Post New Task", path: "/projects/new", icon: PlusCircle, color: "text-green-400" },
     { name: "My Appointments", path: "/dashboard/appointments", icon: CalendarDays, color: "text-purple-400" },
     { name: "My Messages", path: "/dashboard/messages", icon: Send, color: "text-pink-400" },
+    { name: "My Tasks", path: "/dashboard/my-tasks", icon: List, color: "text-yellow-400" },
   ];
 
   const tutorQuickLinks = [

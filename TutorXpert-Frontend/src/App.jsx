@@ -31,7 +31,7 @@ import axios from "axios";
 import AvailabilityPage from "@/pages/dashboard/AvailabilityPage";
 import TestDialog from "@/pages/TestDialog"; // 确保路径正确
 import NewAppointmentPage from "@/pages/NewAppointmentPage";
-
+import MyTasksPage from "@/pages/dashboard/MyTasksPage"
 
 
 // ✅ 设置全局请求拦截器，自动附加 Authorization token
@@ -80,6 +80,7 @@ const App = () => {
               <Route path="/projects/new" element={<NewTaskPage />} />
               <Route path="/dashboard/availability" element={<AvailabilityPage />} />
               <Route path="/appointments/new/:tutor_id" element={<NewAppointmentPage />} />
+              <Route path="/dashboard/my-tasks" element={<MyTasksPage />} />
               {/* <Route path="/pay/:appointmentId" element={<PayPage />} /> */}
             </Route>
 

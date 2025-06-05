@@ -9,19 +9,34 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useEffect } from "react";
 
 const NewTaskPage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  
+
   const [formData, setFormData] = useState({
     title: "",
     subject: "",
     description: "",
     budget: "",
     deadline: "",
-    attachments: []
+    lat: null,
+    lng: null,
+    address: ""
   });
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user?.lat && user?.lng) {
+      setFormData(prev => ({
+        ...prev,
+        lat: user.lat,
+        lng: user.lng,
+        address: user.address || ""
+      }));
+    }
+  }, []);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -42,7 +57,7 @@ const NewTaskPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-  
+
     if (!formData.title || !formData.subject || !formData.description || !formData.budget || !formData.deadline) {
       toast({
         title: "Error",
@@ -52,34 +67,37 @@ const NewTaskPage = () => {
       setIsSubmitting(false);
       return;
     }
-  
+
     try {
-      const {
-        attachments, // ❌ 不传这个字段
-        ...payload
-      } = formData;
-  
-      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/tasks`, {
-        ...payload,
-        lat: -33.87,
-        lng: 151.21,
-        posted_by: "You",
-        posted_date: new Date().toISOString(),  // ✅ ISO datetime string
-        status: "Open",
-        user_id: 1
-      }, {
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      const payload = {
+        title: formData.title.trim(),
+        subject: formData.subject.trim(),
+        description: formData.description.trim(),
+        budget: formData.budget.trim(),
+        deadline: formData.deadline.trim(),
+        address: formData.address?.trim() || "",
+        lat: parseFloat(formData.lat),
+        lng: parseFloat(formData.lng),
+      };
+
+      console.log("📤 Final Payload:", payload);
+
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/tasks`, payload, {
         headers: {
-          "Content-Type": "application/json"
-        }
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`,
+        },
       });
-  
+
       toast({
         title: "Success!",
         description: "Your task has been posted to the platform.",
       });
       navigate("/projects");
     } catch (err) {
-      console.error("❌ 发布失败:", err.response?.data || err.message);
+      console.error("❌ submit fail:", err.response?.data || err.message);
       toast({
         title: "Submission Failed",
         description: "Please try again later.",
@@ -88,9 +106,7 @@ const NewTaskPage = () => {
     } finally {
       setIsSubmitting(false);
     }
-  };
-  
-  
+  }; // ✅ 修复：handleSubmit 函数结束
 
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },

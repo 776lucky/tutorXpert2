@@ -3,9 +3,11 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 from app import models, schemas
 from app.database import get_db
-from fastapi import status
 from pydantic import BaseModel
 from app.dependencies import get_current_user
+
+from datetime import datetime
+from fastapi import Depends, HTTPException, APIRouter, status
 
 
 class TaskStatusUpdate(BaseModel):
@@ -37,6 +39,14 @@ def search_tasks_by_bounds(
 
     return query.all()
 
+
+
+# ✅ 加这个
+@router.get("/tasks/my_tasks", response_model=List[schemas.TaskOut])
+def get_my_tasks(current_user: models.User = Depends(get_current_user), db: Session = Depends(get_db)):
+    return db.query(models.Task).filter(models.Task.user_id == current_user.id).all()
+
+
 # ✅ 根据 task_id 返回任务详情
 @router.get("/tasks/{task_id}", response_model=schemas.TaskOut)
 def get_task_by_id(task_id: int, db: Session = Depends(get_db)):
@@ -46,8 +56,21 @@ def get_task_by_id(task_id: int, db: Session = Depends(get_db)):
     return task
 
 @router.post("/tasks", response_model=schemas.TaskOut, status_code=status.HTTP_201_CREATED)
-def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db)):
-    new_task = models.Task(**task.dict())
+def create_task(task: schemas.TaskCreate, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    new_task = models.Task(
+        title=task.title,
+        subject=task.subject,
+        description=task.description,
+        address=task.address,
+        lat=task.lat,
+        lng=task.lng,
+        budget=task.budget,
+        deadline=task.deadline,
+        status="Open",
+        user_id=current_user.id,
+        posted_by=f"{current_user.profile.first_name} {current_user.profile.last_name}",
+        posted_date=datetime.utcnow()
+    )
     db.add(new_task)
     db.commit()
     db.refresh(new_task)
@@ -132,3 +155,20 @@ def update_task_status(task_id: int, data: TaskStatusUpdate, db: Session = Depen
         "new_status": task.status,
         "accepted_tutor_id": task.accepted_tutor_id,
     }
+
+
+
+
+
+@router.delete("/{task_id}")
+def delete_task(task_id: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+    task = db.query(models.Task).filter(models.Task.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    if task.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to delete this task")
+
+    db.delete(task)
+    db.commit()
+    return {"detail": "Task deleted successfully"}

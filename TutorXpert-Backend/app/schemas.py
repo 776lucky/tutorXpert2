@@ -167,11 +167,6 @@ class TaskCreate(BaseModel):
     description: Optional[str] = None
     budget: Optional[str] = None
     deadline: Optional[str] = None
-    posted_by: Optional[str] = None
-    posted_date: Optional[datetime] = None
-    status: Optional[str] = "Open"
-    user_id: int
-    accepted_tutor_id: Optional[int] = None
 
 
 class MessageCreate(BaseModel):
