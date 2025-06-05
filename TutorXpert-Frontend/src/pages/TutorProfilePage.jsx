@@ -3,8 +3,13 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+
 
 const TutorProfilePage = () => {
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
   const { id } = useParams();
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
@@ -64,6 +69,28 @@ const TutorProfilePage = () => {
           )}
         </CardContent>
       </Card>
+
+      <div className="mt-6 text-center">
+        <Button
+          onClick={async () => {
+            try {
+              await axios.post(`${import.meta.env.VITE_API_BASE_URL}/messages/`, {
+                sender_id: user.id,
+                receiver_id: parseInt(id),
+                text: "Hi, I’d like to learn more about your tutoring!"
+              });
+              navigate(`/dashboard/messages?tutor_id=${id}`);
+            } catch (err) {
+              console.error("❌ Failed to send message", err);
+              alert("Failed to send message");
+            }
+          }}
+        >
+          Send a Message
+        </Button>
+      </div>
+
+
     </div>
   );
 };

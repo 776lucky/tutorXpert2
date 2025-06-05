@@ -246,7 +246,7 @@ class AvailableSlotOut(BaseModel):
     is_booked: bool                  # ✅ 补上
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class AppointmentCreate(BaseModel):
@@ -265,7 +265,7 @@ class AppointmentOut(BaseModel):
     created_at: datetime
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class AppointmentStatusUpdate(BaseModel):
     status: Literal["accepted", "rejected"]

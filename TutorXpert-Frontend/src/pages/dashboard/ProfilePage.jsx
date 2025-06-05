@@ -65,13 +65,34 @@ const ProfilePage = () => {
       ...formData,
       subjects: Array.isArray(formData.subjects)
         ? formData.subjects.join(",")
-        : formData.subjects ?? "",  // 确保是字符串
+        : formData.subjects ?? "",
     };
   
     try {
       await axios.put(`${import.meta.env.VITE_API_BASE_URL}/profiles/${storedUser.id}`, payload);
       setProfile(payload);
       setIsEditing(false);
+  
+      // ✅ 同步更新 localStorage 中的 user.profile
+      const stored = JSON.parse(localStorage.getItem("user"));
+      if (stored) {
+        stored.profile = {
+          ...stored.profile,
+          ...payload,
+        };
+      
+        // ✅ 顶层 user.lat/lng/address 同步更新
+        if (payload.lat && payload.lng) {
+          stored.lat = payload.lat;
+          stored.lng = payload.lng;
+        }
+        if (payload.address) {
+          stored.address = payload.address;
+        }
+      
+        localStorage.setItem("user", JSON.stringify(stored));
+      }
+  
       toast({
         title: "Edited successfully!",
         duration: 2000,
@@ -87,6 +108,7 @@ const ProfilePage = () => {
     }
   };
   
+  
 
   const renderStudentProfile = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -100,18 +122,26 @@ const ProfilePage = () => {
       </div>
       <div>
         <label className="block mb-1 font-medium">Education Level</label>
-        <Input name="education_level" value={formData.education_level || ""} onChange={handleChange} className="text-white" />
+        <select
+          name="education_level"
+          value={formData.education_level || ""}
+          onChange={handleChange}
+          className="w-full bg-background text-white border border-input rounded-md px-3 py-2"
+        >
+          <option value="">Select</option>
+          <option value="High School">High School</option>
+          <option value="Bachelor">Bachelor</option>
+          <option value="Master">Master</option>
+          <option value="PhD">PhD</option>
+        </select>
       </div>
-      <div>
-        <label className="block mb-1 font-medium">Availability</label>
-        <Input name="availability" value={formData.availability || ""} onChange={handleChange} className="text-white" />
-      </div>
-      <div>
+      <div className="md:col-span-2">
         <label className="block mb-1 font-medium">Address</label>
-        <Input name="address" value={formData.address || ""} onChange={handleChange} className="text-white" />
+        <AddressAutoComplete form={formData} setForm={setFormData} />
       </div>
     </div>
   );
+  
 
 
   const renderTutorProfile = () => (
