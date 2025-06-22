@@ -1,1 +1,1 @@
-SELECT * from tasks;
+SELECT * FROM users;

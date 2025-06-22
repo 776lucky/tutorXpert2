@@ -34,8 +34,15 @@ const TutorProfilePage = () => {
   return (
     <div className="p-6 max-w-4xl mx-auto text-foreground bg-background min-h-screen">
       <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl text-primary">{profile.first_name} {profile.last_name}</CardTitle>
+        <CardHeader className="flex flex-col items-center gap-4">
+          <img
+            src={profile.avatar_url || "https://via.placeholder.com/120"}
+            alt="Tutor Avatar"
+            className="w-24 h-24 rounded-full object-cover border-2 border-primary"
+          />
+          <CardTitle className="text-2xl text-primary text-center">
+            {profile.first_name} {profile.last_name}
+          </CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div><strong>Phone:</strong> {display(profile.phone_number)}</div>
@@ -89,8 +96,6 @@ const TutorProfilePage = () => {
           Send a Message
         </Button>
       </div>
-
-
     </div>
   );
 };

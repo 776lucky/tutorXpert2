@@ -92,7 +92,12 @@ const TutorsPage = () => {
       );
     }
   }, []);
-  
+
+  // ✅ 添加此处 useEffect 实现筛选功能联动
+  useEffect(() => {
+    filterTutors();
+  }, [searchTerm, subjectFilter, ratingFilter, distanceFilter, userPosition, tutors]);
+    
   // ✅ 获取 tutor 数据并设置状态
   const fetchTutorsByBounds = async (bounds) => {
     try {
