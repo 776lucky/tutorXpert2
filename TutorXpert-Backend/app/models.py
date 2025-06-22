@@ -87,6 +87,12 @@ class TaskApplication(Base):
     tutor_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     applied_at = Column(DateTime(timezone=True), server_default=func.now())
     status = Column(String, default="pending")
+    message = Column(Text, nullable=True)
+    # 反向引用 tutor 对象
+    tutor = relationship("User", backref="task_applications")
+
+    # 可选：任务对象引用（用于修改 task.status）
+    task = relationship("Task", backref="applications")
 
 class AvailableSlot(Base):
     __tablename__ = "available_slots"
