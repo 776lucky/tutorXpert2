@@ -208,3 +208,40 @@ TutorXpert currently enables:
 -  Real-time application submissions + dashboard tracking   
 
 🎯 The next development phase will focus on enabling tutor-initiated messaging, time slot scheduling, and full task lifecycle (matching → completion).
+
+
+
+
+### 🧑‍🎓 Student-Side: Task Application Management
+
+#### 1. Post Task
+Students post tasks and view them under **My Tasks**. Each task has a status (e.g., `Open`).
+
+#### 2. View Tutor Applications
+Click a task to see all tutor applications:
+- Tutor profile summary (name, subjects, hourly rate, etc.)
+- Message from tutor
+- Application status: `pending`, `accepted`, or `rejected`
+
+#### 3. Accept an Application
+- Mark one tutor as `accepted`
+- Task status updates to `in_progress`
+- All other applications automatically marked as `rejected`
+
+#### 4. Reject an Application
+- Mark a tutor’s application as `rejected`
+
+---
+
+### 🔄 Feature Highlights
+- ✅ Students select the most suitable tutor
+- ✅ Automatic task status transition (`open` → `in_progress`)
+- ✅ One-click accept/reject
+- ✅ Prevents multiple tutors from being accepted
+
+---
+
+### 🚀 Future Enhancements (Planned)
+- Tutor uploads resume/certifications
+- Student receives real-time notifications
+- View tutor’s review history before accepting

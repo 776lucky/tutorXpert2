@@ -197,6 +197,8 @@ class ConversationOut(BaseModel):
 class TaskApplicationCreate(BaseModel):
     task_id: int
     tutor_id: int
+    message: Optional[str] = None
+
 
 class TaskApplicationOut(BaseModel):
     id: int
@@ -269,3 +271,44 @@ class AppointmentOut(BaseModel):
 
 class AppointmentStatusUpdate(BaseModel):
     status: Literal["accepted", "rejected"]
+
+
+
+
+class ApplicationDecision(BaseModel):
+    decision: Literal["accept", "reject"]
+
+
+class ProfileMini(BaseModel):
+    first_name: Optional[str]
+    last_name: Optional[str]
+    hourly_rate: Optional[int]
+    subjects: Optional[List[str]]
+    address: Optional[str]
+
+    class Config:
+        from_attributes = True
+
+    @validator("subjects", pre=True)
+    def split_subjects(cls, v):
+        if isinstance(v, str):
+            return [s.strip() for s in v.split(",")]
+        return v or []
+
+class TutorBasicInfo(BaseModel):
+    id: int
+    profile: Optional[ProfileMini]
+
+    class Config:
+        from_attributes = True
+
+class TaskApplicationWithTutorOut(BaseModel):
+    id: int
+    task_id: int
+    tutor: TutorBasicInfo
+    message: Optional[str]
+    applied_at: datetime
+    status: str
+
+    class Config:
+        from_attributes = True

@@ -59,12 +59,17 @@ class Task(Base):
     lng = Column(Float)
     budget = Column(String)
     deadline = Column(String)
-    status = Column(String, default="Open")  # ✅ 建议加 default
+    status = Column(String, default="Open")
     posted_by = Column(String)
-    posted_date = Column(DateTime(timezone=True), server_default=func.now())  # ✅ 添加
-    user_id = Column(Integer, ForeignKey("users.id"))  # ✅ 添加这一行
-    accepted_tutor_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # ✅ 新增
+    posted_date = Column(DateTime(timezone=True), server_default=func.now())
+    user_id = Column(Integer, ForeignKey("users.id"))
+    accepted_tutor_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+
     user = relationship("User", back_populates="tasks", foreign_keys=[user_id])
+
+    # ✅ 对应绑定 task -> task_applications
+    applications = relationship("TaskApplication", back_populates="task", cascade="all, delete-orphan")
+
 
 class Message(Base):
     __tablename__ = "messages"
@@ -88,11 +93,10 @@ class TaskApplication(Base):
     applied_at = Column(DateTime(timezone=True), server_default=func.now())
     status = Column(String, default="pending")
     message = Column(Text, nullable=True)
-    # 反向引用 tutor 对象
-    tutor = relationship("User", backref="task_applications")
 
-    # 可选：任务对象引用（用于修改 task.status）
-    task = relationship("Task", backref="applications")
+    # ✅ 正确写法：显式建立双向关系
+    tutor = relationship("User", backref="task_applications")
+    task = relationship("Task", back_populates="applications")
 
 class AvailableSlot(Base):
     __tablename__ = "available_slots"

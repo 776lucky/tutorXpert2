@@ -9,6 +9,8 @@ from app.dependencies import get_current_user
 from datetime import datetime
 from fastapi import Depends, HTTPException, APIRouter, status
 
+from sqlalchemy.orm import joinedload
+
 
 class TaskStatusUpdate(BaseModel):
     status: str  # "In Progress" or "Completed"
@@ -86,19 +88,66 @@ def create_task_application(application: schemas.TaskApplicationCreate, db: Sess
     if existing:
         raise HTTPException(status_code=400, detail="You have already applied for this task.")
 
+    # ✅ 添加 message
     new_app = models.TaskApplication(
         task_id=application.task_id,
-        tutor_id=application.tutor_id
+        tutor_id=application.tutor_id,
+        message=application.message
     )
     db.add(new_app)
     db.commit()
     db.refresh(new_app)
     return new_app
 
+
 @router.get("/my_applications", response_model=List[schemas.TaskApplicationSimple])
 def get_my_applications(tutor_id: int, db: Session = Depends(get_db)):
     applications = db.query(models.TaskApplication).filter_by(tutor_id=tutor_id).all()
     return applications
+
+
+# 学生查看某个任务收到的所有申请（含 tutor 信息）
+
+@router.get("/tasks/{task_id}/applications", response_model=List[schemas.TaskApplicationWithTutorOut])
+def get_applications_for_task(task_id: int, db: Session = Depends(get_db)):
+    apps = (
+        db.query(models.TaskApplication)
+        .filter(models.TaskApplication.task_id == task_id)
+        .options(
+            joinedload(models.TaskApplication.tutor).joinedload(models.User.profile)  # 加载嵌套 profile
+        )
+        .all()
+    )
+    return apps
+
+
+# 学生对申请做出决策（accept / reject）
+@router.post("/tasks/applications/{application_id}/decision")
+def decide_application(application_id: int, decision: dict, db: Session = Depends(get_db)):
+    app = db.query(models.TaskApplication).filter_by(id=application_id).first()
+    if not app:
+        raise HTTPException(status_code=404, detail="Application not found")
+
+    if decision["decision"] == "accept":
+        app.status = "accepted"
+        app.task.status = "in_progress"
+
+        # 拒绝其他所有申请
+        db.query(models.TaskApplication).filter(
+            models.TaskApplication.task_id == app.task_id,
+            models.TaskApplication.id != application_id
+        ).update({"status": "rejected"})
+
+    elif decision["decision"] == "reject":
+        app.status = "rejected"
+
+    else:
+        raise HTTPException(status_code=400, detail="Invalid decision")
+
+    db.commit()
+    return {"message": f"Application {decision['decision']}ed"}
+
+
 
 
 @router.get("/tutor/applied_tasks", response_model=List[schemas.TaskWithApplicationStatus])
@@ -172,3 +221,39 @@ def delete_task(task_id: int, db: Session = Depends(get_db), current_user: model
     db.delete(task)
     db.commit()
     return {"detail": "Task deleted successfully"}
+
+
+@router.post("/tasks/applications/{application_id}/decision")
+def decide_application(
+    application_id: int,
+    decision: schemas.ApplicationDecision,
+    db: Session = Depends(get_db)
+):
+    app = db.query(models.TaskApplication).filter_by(id=application_id).first()
+    if not app:
+        raise HTTPException(status_code=404, detail="Application not found")
+
+    if app.status != "pending":
+        raise HTTPException(status_code=400, detail="This application has already been processed.")
+
+    task = db.query(models.Task).filter_by(id=app.task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Associated task not found")
+
+    if decision.decision == "accept":
+        app.status = "accepted"
+        task.status = "in_progress"
+        task.accepted_tutor_id = app.tutor_id  # 若你有此字段
+
+        # 拒绝所有同任务下的其他申请
+        db.query(models.TaskApplication).filter(
+            models.TaskApplication.task_id == app.task_id,
+            models.TaskApplication.id != application_id,
+            models.TaskApplication.status == "pending"
+        ).update({"status": "rejected"}, synchronize_session=False)
+
+    elif decision.decision == "reject":
+        app.status = "rejected"
+
+    db.commit()
+    return {"message": f"Application has been {decision.decision}ed."}
