@@ -1,127 +1,94 @@
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { List, Eye, Trash2 } from "lucide-react";
-import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { motion } from "framer-motion";
+
+const fadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4 } },
+};
 
 const MyTasksPage = () => {
   const [tasks, setTasks] = useState([]);
   const { user } = useAuth();
-  const { toast } = useToast();
   const navigate = useNavigate();
-
-  const fadeIn = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-  };
 
   useEffect(() => {
     if (!user?.id || !user?.token) return;
-  
-    axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/tasks/my_tasks`, {
-        headers: {
-          Authorization: `Bearer ${user.token}`,  // ✅ 加 token
-        },
-      })
-      .then((res) => setTasks(res.data))
-      .catch(() =>
-        toast({
-          title: "Failed to fetch tasks",
-          description: "Please try again later.",
-          variant: "destructive",
-        })
-      );
+
+    axios.get(`${import.meta.env.VITE_API_BASE_URL}/tasks/my_tasks`, {
+      headers: {
+        Authorization: `Bearer ${user.token}`,
+      },
+    }).then((res) => setTasks(res.data));
   }, [user]);
-  
 
   const handleDelete = async (taskId) => {
-    if (!confirm("Are you sure you want to delete this task?")) return;
-    try {
-      await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/tasks/${taskId}`);
-      setTasks((prev) => prev.filter((task) => task.id !== taskId));
-      toast({
-        title: "Task deleted",
-        description: "The task was deleted successfully.",
-      });
-    } catch {
-      toast({
-        title: "Delete failed",
-        description: "Unable to delete task.",
-        variant: "destructive",
-      });
-    }
+    if (!window.confirm("Delete this task?")) return;
+    await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/tasks/${taskId}`);
+    setTasks((prev) => prev.filter((task) => task.id !== taskId));
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground py-8 px-4 md:px-8">
-      <motion.div initial="hidden" animate="visible" variants={fadeIn} className="mb-8">
-        <div className="flex items-center mb-2">
-          <List className="h-8 w-8 text-primary mr-2" />
-          <h1 className="text-3xl font-bold">My Posted Tasks</h1>
-        </div>
-        <p className="text-muted-foreground">View and manage tasks you've posted.</p>
-      </motion.div>
+    <div className="p-6 min-h-screen text-foreground bg-background">
+      <motion.h1
+        initial="hidden"
+        animate="visible"
+        variants={fadeIn}
+        className="text-2xl font-bold mb-6"
+      >
+        My Posted Tasks
+      </motion.h1>
 
       {tasks.length === 0 ? (
-        <motion.div
-          variants={fadeIn}
+        <motion.p
           initial="hidden"
           animate="visible"
-          className="text-center py-20 glass-effect rounded-xl shadow-2xl"
+          variants={fadeIn}
+          className="text-muted-foreground"
         >
-          <List className="h-20 w-20 mx-auto text-primary/50 mb-6" />
-          <h3 className="text-2xl font-semibold mb-3 text-primary">No Tasks Posted</h3>
-          <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-            You haven’t posted any tasks yet. Post a task to connect with nearby tutors.
-          </p>
-        </motion.div>
+          No tasks posted.
+        </motion.p>
       ) : (
-        <motion.div
-          variants={fadeIn}
-          initial="hidden"
-          animate="visible"
-          className="space-y-6"
-        >
-          {tasks.map((task) => (
-            <Card key={task.id} className="glass-effect card-hover">
-              <CardHeader>
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                  <CardTitle className="text-xl text-primary">{task.title}</CardTitle>
-                  <Badge variant="outline">{task.status || "Open"}</Badge>
-                </div>
-                <div className="text-sm text-muted-foreground mt-1">{task.subject}</div>
-              </CardHeader>
-              <CardContent className="grid sm:grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">Budget</p>
-                  <p className="text-lg font-semibold">${task.budget}</p>
-                </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Deadline</p>
-                  <p className="text-lg font-semibold">{task.deadline || "—"}</p>
-                </div>
-              </CardContent>
-              <CardFooter className="flex justify-end gap-2 border-t border-border pt-4">
-                <Button size="sm" variant="outline" asChild>
-                  <Link to={`/tasks/${task.id}`}>
-                    <Eye className="w-4 h-4 mr-2" />
-                    View
-                  </Link>
-                </Button>
-                <Button size="sm" variant="destructive" onClick={() => handleDelete(task.id)}>
-                  <Trash2 className="w-4 h-4 mr-2" />
+        <div className="space-y-4">
+          {tasks.map((task, idx) => (
+            <motion.div
+              key={task.id}
+              className="border rounded-lg p-4 bg-card shadow-md"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.05 }}
+            >
+              <h2 className="font-semibold text-lg text-primary">{task.title}</h2>
+              <p className="text-sm text-muted-foreground">Subject: {task.subject}</p>
+              <p className="text-sm text-muted-foreground">Budget: ${task.budget}</p>
+              <p className="text-sm text-muted-foreground">
+                Deadline: {task.deadline || "N/A"}
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  onClick={() => navigate(`/projects/${task.id}`)}
+                  className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+                >
+                  View
+                </button>
+                <button
+                  onClick={() => handleDelete(task.id)}
+                  className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                >
                   Delete
-                </Button>
-              </CardFooter>
-            </Card>
+                </button>
+                <button
+                  onClick={() => navigate(`/tasks/${task.id}/applications`)}
+                  className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >
+                  View Applications
+                </button>
+              </div>
+            </motion.div>
           ))}
-        </motion.div>
+        </div>
       )}
     </div>
   );
