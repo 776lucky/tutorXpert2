@@ -108,8 +108,8 @@ class AvailableSlot(Base):
     end_time = Column(DateTime, nullable=False)
     subject = Column(String(100), nullable=False)  # ✅ 新增字段
     is_booked = Column(Boolean, default=False)
-
     tutor = relationship("User", back_populates="available_slots")
+    appointments = relationship("Appointment", back_populates="slot")  # ✅ 加上这行
 
 
 class Appointment(Base):
@@ -122,7 +122,7 @@ class Appointment(Base):
     message = Column(Text, nullable=True)
     status = Column(String(20), default="pending")  # pending / accepted / rejected
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    slot = relationship("AvailableSlot")
+    slot = relationship("AvailableSlot", back_populates="appointments")
     student = relationship("User", foreign_keys=[student_id])
     tutor = relationship("User", foreign_keys=[tutor_id])
 

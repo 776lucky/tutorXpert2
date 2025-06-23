@@ -84,7 +84,7 @@ const App = () => {
               <Route path="/dashboard/my-tasks" element={<MyTasksPage />} />
               <Route path="/tasks/:taskId/applications" element={<TaskApplicationsPage />} />
               <Route path="/projects/apply/:taskId" element={<TutorApplyProjectPage />} />
-
+              
               {/* <Route path="/pay/:appointmentId" element={<PayPage />} /> */}
             </Route>
 

@@ -42,3 +42,11 @@ def update_appointment_status(
     db.commit()
     db.refresh(appointment)
     return {"message": f"Appointment status updated to {payload.status}"}
+
+
+@router.get("/tutor/{tutor_id}", response_model=List[schemas.AppointmentWithSlotOut])
+def get_appointments_by_tutor(tutor_id: int, db: Session = Depends(get_db)):
+    appointments = db.query(models.Appointment).filter(models.Appointment.tutor_id == tutor_id).all()
+    for a in appointments:
+        _ = a.slot  # 确保 ORM 正确加载 slot
+    return appointments

@@ -316,3 +316,16 @@ class TaskApplicationWithTutorOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class AppointmentWithSlotOut(BaseModel):
+    id: int
+    student_id: int
+    tutor_id: int
+    slot: AvailableSlotOut  # ✅ 替换 slot_id 为完整 slot 对象
+    message: Optional[str]
+    status: str
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
