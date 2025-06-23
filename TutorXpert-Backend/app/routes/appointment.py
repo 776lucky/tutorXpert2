@@ -50,3 +50,23 @@ def get_appointments_by_tutor(tutor_id: int, db: Session = Depends(get_db)):
     for a in appointments:
         _ = a.slot  # 确保 ORM 正确加载 slot
     return appointments
+
+@router.post("/{appointment_id}/accept")
+def accept_appointment(appointment_id: int, db: Session = Depends(get_db)):
+    appt = db.query(models.Appointment).filter_by(id=appointment_id).first()
+    if not appt:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    appt.status = "accepted"
+    appt.slot.is_booked = True
+    db.commit()
+    return {"detail": "Appointment accepted"}
+
+
+@router.post("/{appointment_id}/reject")
+def reject_appointment(appointment_id: int, db: Session = Depends(get_db)):
+    appt = db.query(models.Appointment).filter_by(id=appointment_id).first()
+    if not appt:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    appt.status = "rejected"
+    db.commit()
+    return {"detail": "Appointment rejected"}

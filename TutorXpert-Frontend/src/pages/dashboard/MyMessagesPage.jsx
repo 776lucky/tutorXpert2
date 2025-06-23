@@ -12,8 +12,9 @@ import { useSearchParams } from "react-router-dom";
 
 const MyMessagesPage = () => {
   const [searchParams] = useSearchParams();
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
   const tutorIdFromQuery = searchParams.get("tutor_id");
-  const currentUserId = Number(localStorage.getItem("user_id"));
+  const currentUserId = Number(JSON.parse(localStorage.getItem("user") || "{}").id);
   if (!currentUserId || currentUserId === 0) {
     console.error("❌ 当前用户未登录，user_id 无效！");
     return null; // 或显示登录提示

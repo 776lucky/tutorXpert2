@@ -7,9 +7,32 @@ import { CalendarDays, Video, MessageSquare, DollarSign, UserCircle, Clock } fro
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import { toast } from "@/components/ui/use-toast";
 
 const MyAppointmentsPage = () => {
+
+  const handleDecision = async (appointmentId, action) => {
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/appointments/${appointmentId}/${action}`
+      );
+  
+      toast({ title: `Appointment ${action}ed successfully` });
+  
+      // 更新状态
+      setAppointments((prev) =>
+        prev.map((appt) =>
+          appt.id === appointmentId
+            ? { ...appt, status: action === "accept" ? "accepted" : "rejected" }
+            : appt
+        )
+      );
+    } catch (err) {
+      console.error(`❌ Failed to ${action} appointment:`, err);
+      toast({ title: `Failed to ${action} appointment`, variant: "destructive" });
+    }
+  };
+
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
@@ -40,9 +63,12 @@ const MyAppointmentsPage = () => {
           })}`,
           tutorName: appt.tutor?.full_name,
           studentName: appt.student?.full_name,
+          tutor_id: appt.tutor_id,         // ✅ 保留原始字段
+          student_id: appt.student_id,     // ✅ 保留原始字段
           price: `$${appt.slot.hourly_rate || appt.fee || 0}`,
           status: appt.status,
           needsPayment: appt.status === "Upcoming" && !appt.is_paid,
+          message: appt.message,
         }));
 
         setAppointments(formatted);
@@ -102,11 +128,11 @@ const MyAppointmentsPage = () => {
                   <CardTitle className="text-xl text-primary">{appt.subject}</CardTitle>
                   <Badge
                     variant={
-                      appt.status === "Upcoming"
-                        ? "info"
-                        : appt.status === "Completed"
+                      appt.status === "accepted"
                         ? "success"
-                        : "secondary"
+                        : appt.status === "pending"
+                        ? "secondary"
+                        : "destructive"
                     }
                   >
                     {appt.status}
@@ -119,42 +145,44 @@ const MyAppointmentsPage = () => {
                     : `With: ${appt.studentName || "TBD"}`}
                 </CardDescription>
               </CardHeader>
+            
               <CardContent className="grid sm:grid-cols-2 gap-4">
                 <div>
                   <p className="text-sm text-muted-foreground flex items-center">
-                    <Clock className="h-4 w-4 mr-1.5" />Date & Time
+                    <Clock className="h-4 w-4 mr-1.5" /> Date & Time
                   </p>
                   <p className="font-semibold text-foreground">{appt.date} at {appt.time}</p>
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground flex items-center">
-                    <DollarSign className="h-4 w-4 mr-1.5" />Session Fee
-                  </p>
-                  <p className="font-semibold text-foreground">{appt.price}</p>
-                </div>
+
+                {appt.message && (
+                  <div>
+                    <p className="text-sm text-muted-foreground">Message</p>
+                    <p className="font-medium">{appt.message}</p>
+                  </div>
+                )}
               </CardContent>
-              <CardFooter className="gap-2 flex-wrap justify-start sm:justify-end border-t border-primary/20 pt-4">
-                {appt.status === "Upcoming" && (
-                  <Button size="sm">
-                    <Video className="mr-2 h-4 w-4" /> Join Session
-                  </Button>
+
+              <CardFooter className="gap-2 justify-end border-t border-primary/20 pt-4">
+                {user.userType === "tutor" && appt.status === "pending" && (
+                  <>
+                    <Button
+                      size="sm"
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                      onClick={() => handleDecision(appt.id, "accept")}
+                    >
+                      Accept
+                    </Button>
+                    <Button size="sm" variant="destructive" onClick={() => handleDecision(appt.id, "reject")}>
+                      Reject
+                    </Button>
+                  </>
                 )}
-                {appt.needsPayment && user.userType === "student" && (
-                  <Button size="sm" variant="destructive" asChild>
-                    <Link to={`/pay/${appt.id}`}>
-                      <DollarSign className="mr-2 h-4 w-4" /> Make Payment
-                    </Link>
-                  </Button>
-                )}
-                <Button variant="outline" size="sm">
-                  <MessageSquare className="mr-2 h-4 w-4" />
-                  Message {user.userType === "student" ? "Tutor" : "Student"}
+                <Button variant="outline" size="sm" asChild>
+                  <Link to={`/dashboard/messages?tutor_id=${user.userType === "student" ? appt.tutor_id : appt.student_id}`}>
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    Message {user.userType === "student" ? "Tutor" : "Student"}
+                  </Link>
                 </Button>
-                {appt.status === "Upcoming" && (
-                  <Button variant="outline" size="sm">
-                    Reschedule
-                  </Button>
-                )}
               </CardFooter>
             </Card>
           ))}
