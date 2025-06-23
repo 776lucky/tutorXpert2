@@ -30,11 +30,12 @@ const DashboardPage = () => {
 
   const tutorQuickLinks = [
     { name: "Browse Tasks", path: "/projects", icon: Search, color: "text-blue-400" },
-    { name: "My Listings", path: "/dashboard/listings", icon: List, color: "text-green-400" },
     { name: "My Bids", path: "/dashboard/bids", icon: Briefcase, color: "text-purple-400" },
     { name: "My Schedule", path: "/dashboard/appointments", icon: CalendarDays, color: "text-orange-400" },
-    { name: "Set Availability", path: "/dashboard/availability", icon: CalendarDays, color: "text-indigo-400" },  // ✅ 新增
+    { name: "Set Availability", path: "/dashboard/availability", icon: CalendarDays, color: "text-indigo-400" },
+    { name: "My Messages", path: "/dashboard/messages", icon: Send, color: "text-pink-400" },  // ✅ 新增
   ];
+  
   
   const quickLinks = isTutor ? tutorQuickLinks : studentQuickLinks;
 

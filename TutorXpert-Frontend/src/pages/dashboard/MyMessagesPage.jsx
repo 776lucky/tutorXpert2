@@ -90,7 +90,7 @@ const MyMessagesPage = () => {
     if (newMessage.trim() === "") return;
 
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/messages`, {
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/messages/`, {
         sender_id: currentUserId,
         receiver_id: selectedConversation.id,
         text: newMessage,

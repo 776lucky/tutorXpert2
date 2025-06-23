@@ -118,6 +118,8 @@ class TaskOut(BaseModel):
     posted_date: Optional[datetime] = None
     status: Optional[str] = None
     accepted_tutor_id: Optional[int] = None
+    student: Optional[UserWithProfileOut] = None
+
 
     class Config:
         from_attributes = True
@@ -198,6 +200,7 @@ class TaskApplicationCreate(BaseModel):
     task_id: int
     tutor_id: int
     message: Optional[str] = None
+    bid_amount: Optional[float] = None  # 新增
 
 
 class TaskApplicationOut(BaseModel):
@@ -206,6 +209,7 @@ class TaskApplicationOut(BaseModel):
     tutor_id: int
     applied_at: datetime
     status: str
+    bid_amount: Optional[float]
 
     class Config:
         from_attributes: True

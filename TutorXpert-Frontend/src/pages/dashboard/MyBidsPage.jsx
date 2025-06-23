@@ -1,5 +1,5 @@
-
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,18 +8,16 @@ import { Briefcase, Search, ExternalLink, MessageSquare, AlertTriangle, CheckCir
 import { Link } from "react-router-dom";
 
 const MyBidsPage = () => {
+  const [bids, setBids] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const tutorId = user.id;
+
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
   };
-
-  // Mock data - replace with actual data fetching
-  const bids = [
-    { id: 1, projectTitle: "Quantum Entanglement Simulation", studentName: "StudentX92", bidAmount: "$80", status: "Pending", date: "2025-05-10" },
-    { id: 2, projectTitle: "AI Creative Writing Assistant", studentName: "FutureAuthor", bidAmount: "$120", status: "Accepted", date: "2025-05-08" },
-    { id: 3, projectTitle: "AR Historical Reconstruction", studentName: "HistoryBuffAR", bidAmount: "$150", status: "Rejected", date: "2025-05-05" },
-  ];
-  // const bids = []; // Test empty state
 
   const getStatusIcon = (status) => {
     switch (status.toLowerCase()) {
@@ -28,6 +26,40 @@ const MyBidsPage = () => {
       case "pending": default: return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
     }
   };
+
+  useEffect(() => {
+    const fetchBids = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/my_applications`, {
+          params: { tutor_id: tutorId },
+        });
+        const applications = res.data;
+
+        // 并发获取 task 信息
+        const taskResponses = await Promise.all(
+          applications.map(app =>
+            axios.get(`${import.meta.env.VITE_API_BASE_URL}/tasks/${app.task_id}`)
+              .then(taskRes => ({
+                ...taskRes.data,
+                status: app.status,
+              }))
+          )
+        );
+
+        setBids(taskResponses);
+      } catch (err) {
+        console.error("Failed to fetch bids", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBids();
+  }, [tutorId]);
+
+  if (loading) {
+    return <div className="p-6">Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground py-8 px-4 md:px-8">
@@ -64,36 +96,38 @@ const MyBidsPage = () => {
           animate="visible"
           className="space-y-6"
         >
-          {bids.map((bid) => (
-            <Card key={bid.id} className="glass-effect card-hover">
+          {bids.map((task) => (
+            <Card key={task.id} className="glass-effect card-hover">
               <CardHeader>
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                    <CardTitle className="text-xl text-primary">{bid.projectTitle}</CardTitle>
+                    <CardTitle className="text-xl text-primary">{task.title}</CardTitle>
                     <Badge variant={
-                        bid.status === "Accepted" ? "success" : 
-                        bid.status === "Rejected" ? "destructive" : "secondary"
+                        task.status === "accepted" ? "success" : 
+                        task.status === "rejected" ? "destructive" : "secondary"
                     } className="flex items-center gap-1.5">
-                        {getStatusIcon(bid.status)}
-                        {bid.status}
+                        {getStatusIcon(task.status)}
+                        {task.status}
                     </Badge>
                 </div>
                 <CardDescription>
-                  For: {bid.studentName} • Submitted: {bid.date}
+                  Subject: {task.subject} • Budget: ${task.budget}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-lg font-semibold text-foreground">Your Bid: <span className="text-secondary">{bid.bidAmount}</span></p>
-                {/* Placeholder for bid details or cover letter snippet */}
-                <p className="text-sm text-muted-foreground mt-2">Your proposal highlighted your expertise in advanced quantum algorithms...</p>
+                <p className="text-sm text-muted-foreground">{task.description}</p>
               </CardContent>
               <CardFooter className="gap-2 flex-wrap justify-start sm:justify-end border-t border-primary/20 pt-4">
                 <Button variant="outline" size="sm" asChild>
-                  <Link to={`/projects/${bid.id}`}> <ExternalLink className="mr-2 h-4 w-4"/> View Task</Link>
+                  <Link to={`/projects/${task.id}`}> <ExternalLink className="mr-2 h-4 w-4"/> View Task</Link>
                 </Button>
-                <Button variant="outline" size="sm">
-                  <MessageSquare className="mr-2 h-4 w-4"/> Message Student
+
+                <Button variant="outline" size="sm" asChild>
+                  <Link to={`/dashboard/messages?target_id=${task.student?.id}`}>
+                    <MessageSquare className="mr-2 h-4 w-4"/> Message Student
+                  </Link>
                 </Button>
-                {bid.status === "Pending" && (
+
+                {task.status === "pending" && (
                    <Button variant="destructive" size="sm" className="bg-orange-600/80 hover:bg-orange-600">Withdraw Bid</Button>
                 )}
               </CardFooter>

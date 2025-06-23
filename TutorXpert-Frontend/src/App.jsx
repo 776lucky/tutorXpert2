@@ -33,7 +33,7 @@ import TestDialog from "@/pages/TestDialog"; // 确保路径正确
 import NewAppointmentPage from "@/pages/NewAppointmentPage";
 import MyTasksPage from "@/pages/dashboard/MyTasksPage"
 import TaskApplicationsPage from "@/pages/TaskApplicationsPage";
-
+import TutorApplyProjectPage from "@/pages/TutorApplyProjectPage";
 
 // ✅ 设置全局请求拦截器，自动附加 Authorization token
 axios.interceptors.request.use((config) => {
@@ -83,6 +83,7 @@ const App = () => {
               <Route path="/appointments/new/:tutor_id" element={<NewAppointmentPage />} />
               <Route path="/dashboard/my-tasks" element={<MyTasksPage />} />
               <Route path="/tasks/:taskId/applications" element={<TaskApplicationsPage />} />
+              <Route path="/projects/apply/:taskId" element={<TutorApplyProjectPage />} />
 
               {/* <Route path="/pay/:appointmentId" element={<PayPage />} /> */}
             </Route>

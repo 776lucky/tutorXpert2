@@ -68,10 +68,12 @@ const TaskApplicationsPage = () => {
                   : "No rate listed"}
               </CardTitle>
             </CardHeader>
+
             <CardContent className="space-y-2 text-sm">
               <p><strong>Subjects:</strong> {app.tutor?.profile?.subjects?.join(", ")}</p>
               <p><strong>Address:</strong> {app.tutor?.profile?.address}</p>
               <p><strong>Message:</strong> {app.message}</p>
+              <p><strong>Bid Amount:</strong> ${app.bid_amount}</p> {/* ✅ 新增这一行 */}
               <p><strong>Status:</strong> <span className="capitalize">{app.status}</span></p>
               {app.status === "pending" && (
                 <div className="flex gap-3 pt-2">
@@ -82,6 +84,7 @@ const TaskApplicationsPage = () => {
                 </div>
               )}
             </CardContent>
+
           </Card>
         ))
       )}

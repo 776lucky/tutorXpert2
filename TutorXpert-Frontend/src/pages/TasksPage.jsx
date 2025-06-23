@@ -33,9 +33,11 @@ const getDistanceFromLatLng = (lat1, lng1, lat2, lng2) => {
 
 
 
-
-
 const TasksPage = () => {
+  const [bidAmount, setBidAmount] = useState("");
+  const [showBidDialog, setShowBidDialog] = useState(false);
+
+
   const { user } = useAuth();  // user.id 即为当前 tutor 的 ID
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);  // ✅ 用于存储点击的任务详情
@@ -67,25 +69,19 @@ const TasksPage = () => {
 
 
   const handleApply = async (task) => {
-    if (!user?.id) {
-      toast({
-        title: "Not Logged In",
-        description: "Please log in as a tutor to apply for tasks.",
-        variant: "destructive",
-      });
-      return;
-    }
-  
     try {
       const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/task_applications`, {
         task_id: task.id,
         tutor_id: user.id,
+        bid_amount: parseFloat(bidAmount),
       });
       toast({
         title: "Application Submitted",
-        description: `You have applied for "${task.title}".`,
+        description: `You have applied for "${task.title}" with a bid of $${bidAmount}.`,
       });
       setAppliedTaskIds((prev) => new Set(prev).add(task.id));
+      setShowBidDialog(false);
+      setBidAmount("");
     } catch (err) {
       if (err.response?.status === 400) {
         toast({
@@ -346,18 +342,13 @@ const TasksPage = () => {
                     >
                       <Link to={`/projects/${task.id}`}>View Details</Link>
                     </Button>
-
-                    <Button
-                      className="flex-1"
-                      onClick={() => handleApply(task)}
-                      disabled={appliedTaskIds.has(task.id)}
-                    >
-                      {appliedTaskIds.has(task.id) ? "Applied" : "Apply Now"} <Zap className="ml-2 h-4 w-4 text-blue-400" />
+                    <Button className="flex-1" asChild disabled={appliedTaskIds.has(task.id)}>
+                      <Link to={`/projects/apply/${task.id}`}>
+                        {appliedTaskIds.has(task.id) ? "Applied" : "Apply Now"}
+                        <Zap className="ml-2 h-4 w-4 text-blue-400" />
+                      </Link>
                     </Button>
                   </CardFooter>
-
-
-
                 </Card>
               </motion.div>
             ))}
@@ -390,8 +381,11 @@ const TasksPage = () => {
                 <p><strong>Address:</strong> {selectedTask.address}</p>
               </div>
               <DialogFooter className="pt-4">
-                <Button onClick={() => alert("Apply submitted (mock)")}>
-                  Apply Now
+                <Button onClick={() => {
+                  setSelectedTask(task);
+                  setShowBidDialog(true);
+                }}>
+                  Apply
                 </Button>
               </DialogFooter>
             </>
@@ -400,9 +394,44 @@ const TasksPage = () => {
           )}
         </DialogContent>
       </Dialog>
+      {showBidDialog && selectedTask && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">
+              Apply to "{selectedTask.title}"
+            </h2>
 
-
-
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium">Bid Amount ($)</label>
+                <input
+                  type="number"
+                  className="w-full mt-1 px-3 py-2 border rounded"
+                  value={bidAmount}
+                  onChange={(e) => setBidAmount(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium">Message</label>
+                <textarea
+                  rows={4}
+                  className="w-full mt-1 px-3 py-2 border rounded"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                />
+              </div>
+              <div className="flex justify-end gap-3 pt-2">
+                <Button variant="ghost" onClick={() => setShowBidDialog(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleSubmitApplication}>
+                  Submit Application
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

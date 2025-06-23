@@ -97,6 +97,7 @@ class TaskApplication(Base):
     # ✅ 正确写法：显式建立双向关系
     tutor = relationship("User", backref="task_applications")
     task = relationship("Task", back_populates="applications")
+    bid_amount = Column(Float, nullable=True)  # 新增
 
 class AvailableSlot(Base):
     __tablename__ = "available_slots"

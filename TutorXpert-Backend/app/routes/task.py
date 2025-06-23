@@ -5,10 +5,8 @@ from app import models, schemas
 from app.database import get_db
 from pydantic import BaseModel
 from app.dependencies import get_current_user
-
 from datetime import datetime
 from fastapi import Depends, HTTPException, APIRouter, status
-
 from sqlalchemy.orm import joinedload
 
 
@@ -92,7 +90,8 @@ def create_task_application(application: schemas.TaskApplicationCreate, db: Sess
     new_app = models.TaskApplication(
         task_id=application.task_id,
         tutor_id=application.tutor_id,
-        message=application.message
+        message=application.message,
+        bid_amount=application.bid_amount  # 保存竞价
     )
     db.add(new_app)
     db.commit()
