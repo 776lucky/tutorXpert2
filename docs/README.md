@@ -1,247 +1,84 @@
 # TutorXpert Progress Report
 
 ## 📌 Overview
+**TutorXpert** connects students with local part-time tutors through map-based discovery, task posting, and real-time applications.
 
-**TutorXpert** is a web platform that connects students with nearby part-time tutors.  
-It supports location-based matching, personalized profiles, and interactive task discovery.
-
-Key concepts:  
-- 📍 Map-based local matching  
-- 👤 Transparent tutor/student profiles  
-- ✏️ Task posting and viewing workflows  
+Key concepts: 📍 location matching • 👤 rich profiles • 💬 guided task/tutor interaction  
+Deployments: Frontend `Render` • Backend `Render/FastAPI`
 
 ---
 
-### 🚀 Deployment & Hosting
+## 🧭 Current Functional Flow
 
-- ✅ Frontend hosted on Render: `https://tutorxpert-frontend.onrender.com`
-- ✅ Backend hosted on Render: `https://tutorxpert-backend-9qxd.onrender.com`
-- ✅ CORS configured via FastAPI middleware
+### Student
+1. Register / log in  
+2. Edit profile  
+3. Post task (title + subject + budget + deadline + location)  
+4. Browse tutors on map  
+5. Send message to tutor  
+6. Receive & evaluate tutor applications *(pending UI for accept / reject)*  
 
----
-
-## 🧭 Functional Flow Currently Supported
-
-**Student Flow:**  
-1. Register as a student
-2. Edit Profile: Fill in name, education, contact, subjects, etc.
-3. Post Task: Provide task details: title, subject, budget, address, coordinates, and deadline
-4. Browse Tutors on the map-based Tutor Discovery page
-5. Contact Tutor by sending a message
-6. Receive Applications from tutors for posted tasks (planned: review/respond)
-
-**Tutor Flow:**  
-1. Register as a tutor
-2. Edit Profile with relevant info and subjects
-3. Browse Available Tasks using filters and map view
-4. Apply to Task by clicking “Apply Now”
-5. Track Applications under "My Listings" dashboard view
-6. Message Student (if messaging module is used/enabled)
-
-The platform currently supports the **complete flow from task posting to discovery**, for both students and tutors.
-
-
-## ✅ Features Completed
+### Tutor
+1. Register / log in  
+2. Edit profile & set **availability slots** (subject + start_time + end_time)  
+3. Browse tasks on map  
+4. **Apply with bid_amount + message**  
+5. Track applications in dashboard  
+6. *(WIP)* reply to student messages  
 
 ---
 
-### 👥 User System
+## ✅ Features Completed Since Last Report
 
-- ✅ Role-based registration: `Student` / `Tutor`  
-- ✅ Personalized dashboard after login  
-- ✅ Profile editing: name, contact, education, subjects  
-- ✅ Backend-integrated profile update and storage  
-
-⛏️ Work: UI forms, backend models (`User`, `Profile`), role logic, data sync  
-
----
-
-### 📝 Task Posting (Student Side)
-
-- ✅ Post tasks with title, subject, budget, deadline, location  
-- ✅ Auto timestamp (`posted_date`), geo-coordinates saved  
-- ✅ Data stored in PostgreSQL, immediately visible on tutor side  
-
-⛏️ Work: Frontend form, API integration, schema with timestamp + coordinates  
+| Module                       | Status | Notes |
+|------------------------------|--------|-------|
+| Tutor availability slots     | ✅     | Tutors create bookable time blocks |
+| Task application **bidding** | ✅     | `bid_amount` + message stored in DB, duplicates blocked |
+| Bid & message pop-up (FE)    | ✅     | Dialog component integrated on “Apply Now” |
+| Slot UI polish               | ✅     | Improved typography & card styling |
 
 ---
 
-### 🗺️ Task Discovery (Tutor Side)
+## 🛠️ Core Feature Summary
 
-- ✅ Map-based view of nearby tasks  
-- ✅ Live filter by map boundary + subject  
-- ✅ Task list and detail page routing  
-
-⛏️ Work: Mapbox integration, dynamic API query, frontend routing  
-
----
-
-### 🔍 Tutor Discovery (Student Side)
-
-- ✅ View tutors on map with filter by subject/location  
-- ✅ Tutor cards with summary info  
-- ✅ Detailed tutor profile page  
-
-⛏️ Work: Filter logic, reusable components, page linking  
+| Component                     | Status | Description |
+|-------------------------------|--------|-------------|
+| Role-based auth (JWT)         | ✅     | Student / Tutor dashboards |
+| Profile editing               | ✅     | Name, education, subjects, hourly_rate, WWCC |
+| Task creation & listing       | ✅     | Geo-encoded, instant tutor visibility |
+| Map search (tasks & tutors)   | ✅     | Boundary + subject filters |
+| Application flow (with bids)  | ✅     | Tutor applies once per task, submits bid |
+| Tutor availability scheduling | ✅     | Time-slot CRUD, stored in DB |
+| Messaging (student → tutor)   | ✅     | Threads persisted |
+| Anti-bypass filters           | ✅     | Regex blocks direct contact info |
+| PostgreSQL + SQLAlchemy       | ✅     | Normalised schema, FK constraints |
 
 ---
 
-### 🔒 Anti-Bypass Safeguards
+## 🚧 Remaining Work Before MVP Launch
 
-- ✅ Prevent students and tutors from bypassing the platform for direct transactions
-- ✅ Message system filters phone numbers, emails, and social handles 
-- ✅ Regex-based backend validation blocks contact info in messages
-- ✅ Frontend alerts users when restricted content is detected
-- ✅ Tested with multiple sample entries  
-
----
-
-### ✉️ Messaging System (Beta)
-
-- ✅ Students can initiate messages to tutors from tutor cards
-- ✅ Chat UI includes message thread and message input
-- ✅ Messages are stored in database with sender/receiver roles
-- ✅ Tutor dashboard displays incoming conversations
-
-⛏️ Work: Message data model, FastAPI routing, front-end dialogue components and navigation jumps
+| Feature                              | Required | Status |
+|--------------------------------------|----------|--------|
+| Student accepts / rejects applications | ✅ | ⏳ |
+| Tutor replies in chat                | ✅ | ⏳ |
+| Task status flow `open → in_progress → completed` | ✅ | ⏳ |
+| Rating & review system               | ⛔ | 💤 |
 
 ---
 
-### 📌 Task Application Flow (Tutor Side)
+## 📈 New Roadmap Items
 
-- ✅ Tutors can browse student-posted tasks with filters and map view
-- ✅ Click **Apply Now** to submit application for a specific task
-- ✅ Applications are stored in `task_applications` table with status tracking
-- ✅ Prevents duplicate applications from the same tutor
-- ✅ Dashboard → My Listings shows tasks tutor has applied to (live from DB)
-
----
-
-### 🛠️ Backend & Data Integration
-
-- ✅ PostgreSQL schema: `users`, `profile`, `tasks`, `task_applications`, `messages`
-- ✅ FastAPI with full Pydantic validation  
-- ✅ Role-based access checks in both frontend and backend
+| Priority | Feature                        | Description |
+|----------|--------------------------------|-------------|
+| 🔴 High  | **Payment & Order Module**     | Stripe integration, platform escrow, order records, tutor payout |
+| 🟠 Medium| Wallet & withdrawal            | Tutor balance, manual/automatic payout |
+| 🟠 Medium| Refund / dispute handling      | Basic refund rules, admin workflow |
+| 🟢 Low   | Tax & KYC compliance           | Identity verification for payouts |
 
 ---
 
-## 📌 Key Features
+## 🌟 Conclusion
+- **Availability scheduling** and **bid-based applications** are live, closing the gap between posting and negotiation.  
+- The next critical milestone is payment & order processing, followed by full task lifecycle and messaging symmetry.
 
-To enable full two-way interaction between students and tutors, the following features are planned:
-
-### 💬 Messages
-Student can send message to tutor now
-Planned: Design tutor message function, and prevent tutor students from leaving the platform to receive orders (IMPORTANT!!)
-
-### 🔄 Tasks
-Student can post tasks
-Tutor can apply tasks, and can see applied tasks in -->dashboard-->MyListings
-Planned: Enable transitions such as `Open → In Progress → Completed`.
-
-### 📅 Time Scheduling  
-Tutors cannot define availability.  
-Planned: Tutors select time blocks → Students choose/book accordingly.
-
-### ⭐ Reviews and Ratings  
-No feedback mechanism in place.  
-Planned: Allow students to rate and review tutors after task completion.
-
----
-
-## Work Summary
-
-| Component                        | Status | Description                                                |
-|----------------------------------|--------|------------------------------------------------------------|
-| User registration & roles        | ✅     | Role-based login flow for students and tutors              |
-| Profile editing                  | ✅     | User info update: name, education, contact, subjects       |
-| Task creation & listing          | ✅     | Students post tasks with subject, budget, location, deadline |
-| Task discovery & filtering       | ✅     | Tutors browse/filter tasks by subject + map boundary       |
-| Tutor discovery                  | ✅     | Students browse tutors via subject + location filter       |
-| Task detail page                 | ✅     | Dedicated page with full task info                         |
-| Application flow (tutor)         | ✅     | Tutors apply to tasks; duplicates prevented                |
-| Messaging system (student→tutor) | ✅     | Students initiate chat; stored in DB                       |
-| Database & schema validation     | ✅     | PostgreSQL with Pydantic/SQLAlchemy                        |
-| Geolocation & map integration    | ✅     | Location-aware search for tasks/tutors                     |
-| Frontend UI & navigation         | ✅     | Routed pages, reusable components, and map-based UI        |
-| Form handling & feedback         | ✅     | Input validation with user-friendly error messages         |
-
-> All modules were designed, developed, and tested independently by the same developer, across both frontend and backend layers. Work covers full-stack integration, business logic, and production-level data modeling.
-
-
----
-
-## 📌 Roadmap
-
-| Priority | Feature                     | Description                                                  |
-|----------|-----------------------------|--------------------------------------------------------------|
-| 🔴 High  | Tutor → Task application     | ✅ Implemented: Tutors apply to tasks; tracked in DB         |
-| 🟠 Medium| Task status transitions     | Planned: Open → In Progress → Completed                      |
-| 🟠 Medium| Scheduling availability     | Planned: Tutors define time slots; students book             |
-| 🟢 Low   | Messaging enhancement       | Planned: Tutor messaging flow + contact bypass safeguards    |
-| 🟢 Low   | Ratings & feedback          | Planned: Post-task review and rating system                  |
-| 🟢 Low   | UI polish & validations     | Planned: UX refinement and stronger frontend validations     |
-
----
-
-## 🚧 Remaining Work Before Launch
-
-### 🧩 Functional Completion (Core Interaction Loop)
-
-| Feature                               | Required | Status     | Description                                                                 |
-|---------------------------------------|----------|------------|-----------------------------------------------------------------------------|
-| 🧾 Student views & responds to applications | ✅ Yes  | ❌ Not Done | Students should be able to see tutors who applied to their tasks, and accept/reject |
-| 💬 Tutor can reply to messages        | ✅ Yes    | ❌ Not Done | Currently only students can message tutors; tutors need reply capability   |
-| 🔁 Task status transitions            | ✅ Yes    | ❌ Not Done | Tasks should move from `Open` → `In Progress` → `Completed`                |
-| 📅 Tutor availability scheduling      | ⛔ Optional | ❌ Not Done | Optional: Tutors define time slots for student booking                     |
-| ⭐ Reviews and ratings                | ⛔ Optional | ❌ Not Done | Optional: Students review tutors after task completion                     |
-
-
----
-
-
-## 📈 Conclusion
-
-TutorXpert currently enables:
-
--  End-to-end user journeys for both students and tutors  
--  Map-based exploration of tasks (tutor) and tutors (student)  
--  Real-time application submissions + dashboard tracking   
-
-🎯 The next development phase will focus on enabling tutor-initiated messaging, time slot scheduling, and full task lifecycle (matching → completion).
-
-
-
-
-### 🧑‍🎓 Student-Side: Task Application Management
-
-#### 1. Post Task
-Students post tasks and view them under **My Tasks**. Each task has a status (e.g., `Open`).
-
-#### 2. View Tutor Applications
-Click a task to see all tutor applications:
-- Tutor profile summary (name, subjects, hourly rate, etc.)
-- Message from tutor
-- Application status: `pending`, `accepted`, or `rejected`
-
-#### 3. Accept an Application
-- Mark one tutor as `accepted`
-- Task status updates to `in_progress`
-- All other applications automatically marked as `rejected`
-
-#### 4. Reject an Application
-- Mark a tutor’s application as `rejected`
-
----
-
-### 🔄 Feature Highlights
-- ✅ Students select the most suitable tutor
-- ✅ Automatic task status transition (`open` → `in_progress`)
-- ✅ One-click accept/reject
-- ✅ Prevents multiple tutors from being accepted
-
----
-
-### 🚀 Future Enhancements (Planned)
-- Tutor uploads resume/certifications
-- Student receives real-time notifications
-- View tutor’s review history before accepting
+*Last updated 24 Jun 2025 (Sydney UTC+10).*
