@@ -24,7 +24,6 @@ Deployments: Frontend `Render` • Backend `Render/FastAPI`
 3. Browse tasks on map  
 4. **Apply with bid_amount + message**  
 5. Track applications in dashboard  
-6. *(WIP)* reply to student messages  
 
 ---
 
